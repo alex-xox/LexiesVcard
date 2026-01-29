@@ -113,7 +113,9 @@
       padding:18px;
       backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 133, 168, .35);
-      touch-action: pan-y; /* allow vertical scroll inside pages */
+
+      /* allow vertical scroll inside pages, swipe handler manages horizontal */
+      touch-action: pan-y;
     }
 
     .book-inner{
@@ -126,7 +128,7 @@
       box-shadow: inset 0 0 0 1px rgba(240, 170, 200, .25);
     }
 
-    /* Navigation tap zones */
+    /* Navigation tap zones (desktop) */
     .nav-zone{
       position:absolute; top:0; bottom:0;
       width:18%;
@@ -143,12 +145,8 @@
       opacity:0;
       transition:opacity .2s ease;
     }
-    .nav-left::after{
-      background: linear-gradient(90deg, rgba(255,77,141,.18), transparent);
-    }
-    .nav-right::after{
-      background: linear-gradient(270deg, rgba(255,77,141,.18), transparent);
-    }
+    .nav-left::after{ background: linear-gradient(90deg, rgba(255,77,141,.18), transparent); }
+    .nav-right::after{ background: linear-gradient(270deg, rgba(255,77,141,.18), transparent); }
     .nav-zone:hover::after{opacity:1}
 
     /* Pages stack */
@@ -169,7 +167,7 @@
       transition: transform 850ms cubic-bezier(.2,.9,.2,1);
     }
 
-    /* Paper edge + spine vibe */
+    /* Paper edge */
     .page::before{
       content:"";
       position:absolute; left:0; top:0; bottom:0;
@@ -182,21 +180,18 @@
       pointer-events:none;
     }
 
-    .page.flipped{
-      transform: rotateY(-180deg);
-    }
+    .page.flipped{ transform: rotateY(-180deg); }
 
-    /* Page content wrapper now scrolls on mobile */
+    /* Content + scrolling */
     .content{
       position:absolute;
       inset:0;
-      padding: 40px 42px 36px 56px; /* extra left for edge */
+      padding: 40px 42px 28px 56px;
       display:flex;
       flex-direction:column;
       gap:16px;
       overflow:hidden;
     }
-
     .scrollable{
       overflow:auto;
       -webkit-overflow-scrolling: touch;
@@ -245,21 +240,18 @@
       background: linear-gradient(90deg, transparent, rgba(255,77,141,.55), transparent);
       filter: blur(.2px);
     }
-
     .subtitle{
       font-family: "Playfair Display", serif;
       font-weight:600;
       font-size: clamp(18px, 2.2vw, 26px);
       color: rgba(70, 30, 50, .88);
     }
-
     .note{
       color: rgba(60,25,45,.75);
       font-size: 14px;
       line-height: 1.45;
       max-width: 56ch;
     }
-
     .divider{
       height:1px;
       width:100%;
@@ -267,12 +259,12 @@
       margin: 8px 0;
     }
 
-    /* Reasons list */
+    /* Reasons */
     .reasons{
       display:grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap:10px 14px;
-      margin-top:6px;
+      margin-top:10px;
     }
     .reason{
       display:flex;
@@ -304,33 +296,23 @@
       font-weight:600;
     }
 
-    /* "Hard to see" secret messages */
-    .secret-footer{
-      margin-top: 16px;
-      padding: 12px 12px 14px;
-      border-radius: 16px;
-      background: rgba(255,255,255,.30);
-      border: 1px solid rgba(240,170,200,.18);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.25);
-    }
-    .secret-title{
-      font-size: 11px;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      color: rgba(90, 20, 55, .35);
-      margin-bottom: 8px;
-      font-weight: 800;
-    }
-    .secret-lines{
-      display:grid;
-      gap:8px;
+    /* Barely-visible secrets (no label/box) */
+    .secrets{
+      margin-top: 18px;
+      padding-bottom: 8px;
       font-family: "Playfair Display", serif;
-      font-size: 13px;
-      color: rgba(90, 20, 55, .26); /* hard to see */
-      line-height: 1.2;
+      font-size: 12.5px;
+      line-height: 1.7;
+      color: rgba(90, 20, 55, .16);
+      user-select:none;
+    }
+    .secrets .line{
+      filter: blur(.15px);
+      text-shadow: 0 1px 0 rgba(255,255,255,.35);
+      letter-spacing: .01em;
     }
 
-    /* Interactive Page 1: Scratch-to-reveal */
+    /* Scratch + Jar */
     .scratch-wrap{
       display:grid;
       grid-template-columns: 1.05fr .95fr;
@@ -338,7 +320,7 @@
       align-items:stretch;
       margin-top:8px;
     }
-    .scratch-card{
+    .panel{
       border-radius: 18px;
       background: rgba(255,255,255,.68);
       border: 1px solid rgba(240,170,200,.28);
@@ -346,52 +328,48 @@
       padding:14px;
       position:relative;
       overflow:hidden;
-      min-height: 300px;
+      min-height: 320px;
     }
-    .scratch-card h3{
+    .panel h3{
       font-family:"Playfair Display", serif;
       font-size:18px;
       color: rgba(70, 25, 50, .9);
-      margin-bottom:6px;
+      margin:0 0 6px;
     }
-    .scratch-card p{
+    .panel p{
       margin:0 0 10px;
       font-size: 13px;
       color: rgba(60,25,45,.72);
       line-height:1.35;
     }
-    #scratchCanvas{
-      width:100%;
-      height: 190px;
-      border-radius: 14px;
-      display:block;
-      background: transparent;
-      border: 1px dashed rgba(255,77,141,.35);
-      touch-action: none; /* allow drawing on iOS */
-    }
 
-    /* message UNDER the canvas so it cannot show early */
-    .scratch-under{
-      position:absolute;
-      left:14px; right:14px;
-      top: 92px; /* below heading and paragraph */
+    .scratch-area{
+      position:relative;
       height: 190px;
       border-radius: 14px;
+      overflow:hidden;
+      border: 1px dashed rgba(255,77,141,.35);
+      background: linear-gradient(135deg, rgba(255,77,141,.10), rgba(255,133,168,.08));
+    }
+    .scratch-under{
+      position:absolute; inset:0;
       display:flex;
       align-items:center;
       justify-content:center;
-      background: linear-gradient(135deg, rgba(255,77,141,.10), rgba(255,133,168,.08));
-      border: 1px solid rgba(255,77,141,.18);
-      box-shadow: 0 10px 18px rgba(0,0,0,.04);
       text-align:center;
       font-family:"Great Vibes", cursive;
       font-size: 34px;
       color: rgba(90, 20, 55, .92);
       user-select:none;
       pointer-events:none;
-      z-index:1;
     }
-    #scratchCanvas{ position:relative; z-index:2; }
+    #scratchCanvas{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      display:block;
+      border-radius: 14px;
+      touch-action:none; /* iOS */
+    }
 
     .mini-panel{
       border-radius: 18px;
@@ -399,7 +377,7 @@
       border: 1px solid rgba(240,170,200,.25);
       box-shadow: 0 12px 22px rgba(0,0,0,.05);
       padding:14px;
-      min-height: 300px;
+      min-height: 320px;
       display:flex;
       flex-direction:column;
       gap:10px;
@@ -433,17 +411,17 @@
       margin-top:auto;
       padding:12px;
       border-radius: 14px;
-      background: rgba(255,255,255,.8);
+      background: rgba(255,255,255,.86);
       border: 1px solid rgba(240,170,200,.28);
       color: rgba(50, 20, 35, .85);
       font-size:13px;
       line-height:1.35;
-      min-height: 92px; /* ensure visible */
+      min-height: 96px;
       display:flex;
       align-items:center;
     }
 
-    /* Interactive Page 2: Heart constellation */
+    /* Constellation */
     .constellation{
       position:relative;
       border-radius: 18px;
@@ -453,7 +431,8 @@
       border: 1px solid rgba(255,77,141,.18);
       box-shadow: 0 16px 30px rgba(0,0,0,.06);
       overflow:hidden;
-      min-height: 360px;
+      min-height: 380px;
+      padding-bottom: 86px; /* reserve space so tooltip never covers hearts */
     }
     .spark{
       position:absolute;
@@ -476,13 +455,12 @@
     .spark::after{ top:-7px; left:0;}
     .spark:hover{ transform: rotate(45deg) scale(1.06); }
 
-    /* Tooltip pinned to bottom so it never covers hearts */
     .tooltip{
       position:absolute;
       left:16px; right:16px; bottom:16px;
       padding:12px 14px;
       border-radius: 14px;
-      background: rgba(255,255,255,.85);
+      background: rgba(255,255,255,.88);
       border: 1px solid rgba(240,170,200,.35);
       box-shadow: 0 18px 40px rgba(0,0,0,.08);
       font-size: 13px;
@@ -514,6 +492,7 @@
       gap:14px;
       flex:1;
       padding-bottom: 10px;
+      position:relative;
     }
     .big-yes{
       width:min(420px, 86%);
@@ -528,7 +507,7 @@
       box-shadow: 0 22px 46px rgba(255,77,141,.28);
       transition: transform .12s ease, filter .12s ease;
       position:relative;
-      z-index:2;
+      z-index:3;
     }
     .big-yes:hover{ filter: brightness(1.02); }
     .big-yes:active{ transform: scale(.99); }
@@ -539,25 +518,24 @@
       height:38px;
       border-radius: 999px;
       border: 1px solid rgba(255,77,141,.28);
-      background: rgba(255,255,255,.75);
+      background: rgba(255,255,255,.85);
       color: rgba(90, 20, 55, .92);
       font-weight:900;
       cursor:pointer;
       box-shadow: 0 12px 24px rgba(0,0,0,.08);
-      transition: transform .12s ease, background .12s ease;
-      z-index:1; /* always below YES */
+      z-index:2; /* visible, but still below YES due to no-go zone */
       left:50%;
-      top: 67%;
+      top: 72%;
       transform: translateX(-50%);
     }
-    .small-no:hover{ background: rgba(255,255,255,.9); }
+    .small-no:hover{ background: rgba(255,255,255,.95); }
     .small-no:active{ transform: translateX(-50%) scale(.98); }
 
     .success{
       margin-top: 10px;
       padding: 10px 12px;
       border-radius: 14px;
-      background: rgba(255,255,255,.78);
+      background: rgba(255,255,255,.82);
       border: 1px solid rgba(240,170,200,.28);
       color: rgba(50,20,35,.9);
       font-size: 14px;
@@ -572,9 +550,8 @@
       .reasons{ grid-template-columns: 1fr; }
       .scratch-wrap{ grid-template-columns: 1fr; }
       .hint{ top:-46px; font-size:12px; }
-      .nav-zone{ width:14%; } /* keep swiping primary */
-      .scratch-under{ top: 92px; height:190px; }
-      .constellation{ min-height: 420px; }
+      .nav-zone{ width:14%; } /* keep swipe primary */
+      .constellation{ min-height: 440px; }
     }
   </style>
 </head>
@@ -585,7 +562,7 @@
   <div class="wrap">
     <div class="stage">
       <div class="hint">
-        Swipe <kbd>→</kbd> / <kbd>←</kbd> on mobile • click edges on desktop • arrows work too
+        Swipe <kbd>←</kbd>/<kbd>→</kbd> on mobile • click edges on desktop • arrows work too
       </div>
 
       <div class="book" id="book">
@@ -624,7 +601,7 @@
               </div>
             </section>
 
-            <!-- PAGE 2: 15 reasons (scrollable + secrets) -->
+            <!-- PAGE 2: 15 reasons + subtle secrets -->
             <section class="page" data-index="1" style="z-index:5">
               <div class="content">
                 <div class="topline">
@@ -643,14 +620,12 @@
 
                   <div class="reasons" id="reasonsGrid"></div>
 
-                  <div class="secret-footer">
-                    <div class="secret-title">little secrets</div>
-                    <div class="secret-lines">
-                      <div>• (secret message one)</div>
-                      <div>• (secret message two)</div>
-                      <div>• (secret message three)</div>
-                      <div>• (secret message four)</div>
-                    </div>
+                  <!-- Barely-visible secrets (no label) -->
+                  <div class="secrets" aria-hidden="true">
+                    <div class="line">Your perfect tits</div>
+                    <div class="line">Your pretty little pussy</div>
+                    <div class="line">Your fat ass</div>
+                    <div class="line">Your willingness to please me</div>
                   </div>
 
                   <p class="note" style="margin-top:12px; opacity:.9">
@@ -660,7 +635,7 @@
               </div>
             </section>
 
-            <!-- PAGE 3: Scratch to reveal + compliment jar (scrollable on mobile) -->
+            <!-- PAGE 3: Scratch + compliment jar -->
             <section class="page" data-index="2" style="z-index:4">
               <div class="content">
                 <div class="topline">
@@ -678,12 +653,14 @@
                   </p>
 
                   <div class="scratch-wrap">
-                    <div class="scratch-card">
+                    <div class="panel">
                       <h3>Scratch to Reveal</h3>
                       <p>Use your finger or mouse. Scratch enough and it shows through.</p>
 
-                      <div class="scratch-under" aria-hidden="true">You make my days softer.</div>
-                      <canvas id="scratchCanvas" width="900" height="360"></canvas>
+                      <div class="scratch-area" id="scratchArea">
+                        <div class="scratch-under">You make my days softer.</div>
+                        <canvas id="scratchCanvas"></canvas>
+                      </div>
                     </div>
 
                     <div class="mini-panel">
@@ -698,7 +675,7 @@
               </div>
             </section>
 
-            <!-- PAGE 4: Heart constellation (tooltip fixed bottom) -->
+            <!-- PAGE 4: Constellation -->
             <section class="page" data-index="3" style="z-index:3">
               <div class="content">
                 <div class="topline">
@@ -729,7 +706,7 @@
               </div>
             </section>
 
-            <!-- PAGE 5: Valentine question (NO can never overlap YES) -->
+            <!-- PAGE 5: Valentine question -->
             <section class="page" data-index="4" style="z-index:2">
               <div class="content" style="position:relative">
                 <div class="topline">
@@ -747,9 +724,8 @@
                     YAY! 💗<br>
                     Now come here so I can celebrate properly.
                   </div>
+                  <button class="small-no" id="noBtn" type="button">no</button>
                 </div>
-
-                <button class="small-no" id="noBtn">no</button>
               </div>
             </section>
 
@@ -761,9 +737,7 @@
   </div>
 
   <script>
-    /* ---------------------------
-       Background hearts
-    ---------------------------- */
+    /* Background hearts */
     (function makeBgHearts(){
       const bg = document.getElementById('bgHearts');
       const count = 18;
@@ -784,9 +758,7 @@
       }
     })();
 
-    /* ---------------------------
-       Page flip logic + swipe on mobile
-    ---------------------------- */
+    /* Page flip logic + swipe on mobile */
     const pages = Array.from(document.querySelectorAll('.page'));
     let current = 0;
 
@@ -820,7 +792,7 @@
       if(e.key === 'ArrowLeft') prev();
     });
 
-    // Swipe (mobile only-ish): detect horizontal swipe on the book
+    // Swipe on book (mobile)
     const book = document.getElementById('book');
     let touchStartX = 0, touchStartY = 0, tracking = false;
 
@@ -837,8 +809,6 @@
       const t = e.touches[0];
       const dx = t.clientX - touchStartX;
       const dy = t.clientY - touchStartY;
-
-      // If it's clearly horizontal, prevent scrolling from stealing it
       if(Math.abs(dx) > 18 && Math.abs(dx) > Math.abs(dy) + 10){
         e.preventDefault();
       }
@@ -847,24 +817,18 @@
     book.addEventListener('touchend', (e)=>{
       if(!tracking) return;
       tracking = false;
-
       const t = (e.changedTouches && e.changedTouches[0]) ? e.changedTouches[0] : null;
       if(!t) return;
       const dx = t.clientX - touchStartX;
       const dy = t.clientY - touchStartY;
-
-      // Ignore if mostly vertical
       if(Math.abs(dy) > Math.abs(dx)) return;
-
-      if(dx < -60) next();      // swipe left -> next page
-      else if(dx > 60) prev();  // swipe right -> prev page
+      if(dx < -60) next();
+      else if(dx > 60) prev();
     }, {passive:true});
 
     goTo(0);
 
-    /* ---------------------------
-       Page 2: 15 reasons (random order)
-    ---------------------------- */
+    /* Page 2: 15 reasons (random order) */
     const reasons = [
       "How easy you are to talk to",
       "Your laugh",
@@ -901,137 +865,86 @@
       reasonsGrid.appendChild(item);
     });
 
-    /* ---------------------------
-       Page 3: Scratch to reveal (mobile fixed)
-    ---------------------------- */
+    /* Page 3: Scratch to reveal (fixed: no show-through, no black fade) */
+    const scratchArea = document.getElementById('scratchArea');
     const canvas = document.getElementById('scratchCanvas');
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
     let isDrawing = false;
-    let revealed = false;
 
-    function fitScratchCanvas(){
-      const rect = canvas.getBoundingClientRect();
+    function resizeScratch(){
+      const rect = scratchArea.getBoundingClientRect();
       const dpr = Math.max(1, window.devicePixelRatio || 1);
-      canvas.width = Math.floor(rect.width * dpr);
+
+      canvas.width  = Math.floor(rect.width * dpr);
       canvas.height = Math.floor(rect.height * dpr);
-      ctx.setTransform(dpr,0,0,dpr,0,0);
-      drawScratchLayer();
-      revealed = false;
-    }
+      canvas.style.width = rect.width + "px";
+      canvas.style.height = rect.height + "px";
 
-    function drawScratchLayer(){
-      const rect = canvas.getBoundingClientRect();
-      const w = rect.width;
-      const h = rect.height;
+      // draw foil in device pixels
+      ctx.setTransform(1,0,0,1,0,0);
+      ctx.clearRect(0,0,canvas.width,canvas.height);
 
-      // IMPORTANT: reset composite so foil draws correctly
+      const grad = ctx.createLinearGradient(0,0,canvas.width,canvas.height);
+      grad.addColorStop(0, 'rgba(255,77,141,0.96)');
+      grad.addColorStop(1, 'rgba(255,133,168,0.82)');
       ctx.globalCompositeOperation = 'source-over';
-      ctx.clearRect(0,0,w,h);
-
-      const grad = ctx.createLinearGradient(0,0,w,h);
-      grad.addColorStop(0, 'rgba(255,77,141,.92)');
-      grad.addColorStop(1, 'rgba(255,133,168,.78)');
       ctx.fillStyle = grad;
-      ctx.fillRect(0,0,w,h);
+      ctx.fillRect(0,0,canvas.width,canvas.height);
 
-      // sparkle lines
-      ctx.globalAlpha = 0.25;
+      // subtle stripes (in foil, not see-through)
+      ctx.globalAlpha = 0.18;
       for(let i=0;i<14;i++){
+        const y = (i/14)*canvas.height;
         ctx.beginPath();
-        const y = (i/14)*h;
         ctx.moveTo(0, y);
-        ctx.lineTo(w, y + 18);
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = 'rgba(255,255,255,.7)';
+        ctx.lineTo(canvas.width, y + 40 * dpr);
+        ctx.lineWidth = 3 * dpr;
+        ctx.strokeStyle = 'rgba(255,255,255,0.8)';
         ctx.stroke();
       }
       ctx.globalAlpha = 1;
 
-      ctx.font = '800 18px Inter, sans-serif';
-      ctx.fillStyle = 'rgba(255,255,255,.94)';
+      // label
+      ctx.font = `${Math.round(18*dpr)}px Inter, sans-serif`;
+      ctx.fillStyle = 'rgba(255,255,255,0.92)';
       ctx.textAlign = 'center';
-      ctx.fillText('Scratch here ✨', w/2, h/2 + 6);
+      ctx.fillText('Scratch here ✨', canvas.width/2, canvas.height/2 + 8*dpr);
     }
 
     function scratchAt(clientX, clientY){
       const rect = canvas.getBoundingClientRect();
-      const x = clientX - rect.left;
-      const y = clientY - rect.top;
+      const dpr = Math.max(1, window.devicePixelRatio || 1);
+      const x = (clientX - rect.left) * dpr;
+      const y = (clientY - rect.top) * dpr;
 
       ctx.globalCompositeOperation = 'destination-out';
       ctx.beginPath();
-      ctx.arc(x, y, 20, 0, Math.PI*2);
+      ctx.arc(x, y, 22 * dpr, 0, Math.PI*2);
       ctx.fill();
       ctx.globalCompositeOperation = 'source-over';
-
-      maybeReveal();
     }
 
-    function getScratchPercent(){
-      const w = canvas.width;
-      const h = canvas.height;
-      // sample in device pixels
-      const step = Math.floor(24 * (window.devicePixelRatio || 1));
-      const img = ctx.getImageData(0,0,w,h).data;
-      let total = 0, cleared = 0;
-      for(let y=0; y<h; y+=step){
-        for(let x=0; x<w; x+=step){
-          const i = (y*w + x)*4 + 3;
-          total++;
-          if(img[i] < 30) cleared++;
-        }
-      }
-      return cleared / total;
-    }
-
-    function maybeReveal(){
-      if(revealed) return;
-      if(getScratchPercent() > 0.38){
-        revealed = true;
-        // fade remaining layer
-        ctx.globalCompositeOperation = 'destination-out';
-        let t = 0;
-        const rect = canvas.getBoundingClientRect();
-        const w = rect.width, h = rect.height;
-        const fade = () => {
-          t += 1;
-          ctx.fillStyle = 'rgba(0,0,0,.22)';
-          ctx.fillRect(0,0,w,h);
-          if(t < 16) requestAnimationFrame(fade);
-        };
-        requestAnimationFrame(fade);
-        ctx.globalCompositeOperation = 'source-over';
-      }
-    }
-
-    function onPointerDown(e){
+    canvas.addEventListener('pointerdown', (e)=>{
       isDrawing = true;
-      const p = e.touches ? e.touches[0] : e;
-      scratchAt(p.clientX, p.clientY);
+      canvas.setPointerCapture?.(e.pointerId);
+      scratchAt(e.clientX, e.clientY);
       e.preventDefault();
-    }
-    function onPointerMove(e){
+    });
+
+    canvas.addEventListener('pointermove', (e)=>{
       if(!isDrawing) return;
-      const p = e.touches ? e.touches[0] : e;
-      scratchAt(p.clientX, p.clientY);
+      scratchAt(e.clientX, e.clientY);
       e.preventDefault();
-    }
-    function onPointerUp(){ isDrawing = false; }
+    });
 
-    canvas.addEventListener('mousedown', onPointerDown);
-    canvas.addEventListener('mousemove', onPointerMove);
-    window.addEventListener('mouseup', onPointerUp);
+    const stopScratch = ()=>{ isDrawing = false; };
+    canvas.addEventListener('pointerup', stopScratch);
+    canvas.addEventListener('pointercancel', stopScratch);
+    window.addEventListener('resize', ()=>requestAnimationFrame(resizeScratch));
+    requestAnimationFrame(resizeScratch);
 
-    canvas.addEventListener('touchstart', onPointerDown, {passive:false});
-    canvas.addEventListener('touchmove', onPointerMove, {passive:false});
-    canvas.addEventListener('touchend', onPointerUp, {passive:true});
-
-    window.addEventListener('resize', ()=>{ requestAnimationFrame(fitScratchCanvas); });
-    requestAnimationFrame(fitScratchCanvas);
-
-    /* ---------------------------
-       Page 3: Compliment Jar
-    ---------------------------- */
+    /* Compliment Jar */
     const jarNotes = [
       "I like the way you make me feel calm and excited at the same time.",
       "You’re the kind of person I’d choose in every universe.",
@@ -1052,15 +965,11 @@
       b.className = 'chip';
       b.type = 'button';
       b.textContent = label;
-      b.addEventListener('click', ()=>{
-        jarNote.textContent = randomFrom(jarNotes);
-      });
+      b.addEventListener('click', ()=>{ jarNote.textContent = randomFrom(jarNotes); });
       chips.appendChild(b);
     });
 
-    /* ---------------------------
-       Page 4: Constellation hearts (tooltip fixed bottom)
-    ---------------------------- */
+    /* Page 4: Constellation */
     const constellation = document.getElementById('constellation');
     const tooltip = document.getElementById('tooltip');
     const foundPill = document.getElementById('foundPill');
@@ -1075,12 +984,14 @@
     ];
 
     let found = 0;
+
+    // Hearts positions kept above tooltip area (tooltip space reserved via padding-bottom)
     const heartsPos = [
-      {x:14, y:22},{x:38, y:16},{x:62, y:24},
-      {x:22, y:46},{x:52, y:42},{x:76, y:52}
+      {x:14, y:18},{x:38, y:14},{x:62, y:18},
+      {x:22, y:40},{x:52, y:36},{x:76, y:44}
     ];
 
-    // clear then add hearts
+    // remove any existing hearts
     Array.from(constellation.querySelectorAll('.spark')).forEach(n=>n.remove());
 
     heartsPos.forEach((pos, i)=>{
@@ -1088,7 +999,6 @@
       s.className = 'spark';
       s.style.left = `calc(${pos.x}% - 8px)`;
       s.style.top  = `calc(${pos.y}% - 8px)`;
-      s.dataset.idx = i;
       s.dataset.opened = "0";
       s.addEventListener('click', ()=>{
         if(s.dataset.opened === "0"){
@@ -1096,18 +1006,14 @@
           found++;
           foundPill.textContent = `${found} / 6 found`;
         }
-        const note = memoryNotes[i];
-        tooltip.innerHTML = `<strong>Note:</strong> ${note}<span class="pill">${found} / 6 found</span>`;
+        tooltip.innerHTML = `<strong>Note:</strong> ${memoryNotes[i]}<span class="pill">${found} / 6 found</span>`;
       });
       constellation.appendChild(s);
     });
 
-    /* ---------------------------
-       Final page: yes/no behavior (NO never overlaps YES)
-    ---------------------------- */
+    /* Final page: YES/NO behavior (NO always visible, never overlaps YES) */
     const yesBtn = document.getElementById('yesBtn');
     const noBtn = document.getElementById('noBtn');
-    const ctaArea = document.getElementById('ctaArea');
     const successMsg = document.getElementById('successMsg');
 
     yesBtn.addEventListener('click', ()=>{
@@ -1115,67 +1021,74 @@
       yesBtn.textContent = "YES!! 💘";
     });
 
-    function teleportNo(){
-      const page = noBtn.closest('.page');
-      const pageRect = page.getBoundingClientRect();
+    function placeNoSafely(randomize){
+      const cta = document.getElementById('ctaArea');
+      const ctaRect = cta.getBoundingClientRect();
       const yesRect = yesBtn.getBoundingClientRect();
 
-      // build a "no-go" rectangle around YES button (in page coords)
+      // button size (CSS-defined)
+      const btnW = 120, btnH = 38;
+
+      // no-go zone around YES (in CTA coords)
       const noGo = {
-        left: (yesRect.left - pageRect.left) - 18,
-        right:(yesRect.right - pageRect.left) + 18,
-        top:  (yesRect.top - pageRect.top) - 18,
-        bottom:(yesRect.bottom - pageRect.top) + 18
+        left: (yesRect.left - ctaRect.left) - 18,
+        right: (yesRect.right - ctaRect.left) + 18,
+        top: (yesRect.top - ctaRect.top) - 18,
+        bottom: (yesRect.bottom - ctaRect.top) + 18
       };
 
-      const btnW = 120, btnH = 38;
-      const pad = 22;
+      const padL = 24;   // keep away from spine side feel
+      const padR = 24;
+      const padB = 18;
 
-      // allowed area inside page
-      const minX = 44; // avoid spine
-      const maxX = pageRect.width - pad - btnW;
-      const minY = Math.max(noGo.bottom + 16, pageRect.height*0.48); // always below YES
-      const maxY = pageRect.height - pad - btnH;
+      const minX = padL;
+      const maxX = ctaRect.width - padR - btnW;
 
-      // fallback if very small screens
+      // Always below the YES button area
+      const minY = Math.max(noGo.bottom + 18, ctaRect.height * 0.58);
+      const maxY = ctaRect.height - padB - btnH;
+
+      // If screen is tiny, clamp so it stays visible
       const safeMinY = Math.min(minY, maxY);
 
-      let x, y;
-      // try a few times to find a spot not intersecting the no-go zone
-      for(let tries=0; tries<20; tries++){
-        x = minX + Math.random() * Math.max(10, (maxX - minX));
-        y = safeMinY + Math.random() * Math.max(10, (maxY - safeMinY));
+      let x = (ctaRect.width/2) - (btnW/2);
+      let y = safeMinY;
 
-        const intersects =
-          x < noGo.right &&
-          x + btnW > noGo.left &&
-          y < noGo.bottom &&
-          y + btnH > noGo.top;
+      if(randomize){
+        for(let tries=0; tries<30; tries++){
+          x = minX + Math.random() * Math.max(10, (maxX - minX));
+          y = safeMinY + Math.random() * Math.max(10, (maxY - safeMinY));
 
-        if(!intersects) break;
+          const intersects =
+            x < noGo.right &&
+            x + btnW > noGo.left &&
+            y < noGo.bottom &&
+            y + btnH > noGo.top;
+
+          if(!intersects) break;
+        }
       }
 
-      noBtn.style.left = x + 'px';
-      noBtn.style.top = y + 'px';
-      noBtn.style.transform = 'translateX(0)';
+      noBtn.style.left = x + "px";
+      noBtn.style.top = y + "px";
+      noBtn.style.transform = "translateX(0)";
+    }
 
+    // initial: centered under YES but still safe
+    placeNoSafely(false);
+
+    noBtn.addEventListener('click', (e)=>{
+      e.preventDefault();
+      placeNoSafely(true);
       noBtn.animate(
         [{transform:'translateX(0) scale(1)'},{transform:'translateX(0) scale(1.05)'},{transform:'translateX(0) scale(1)'}],
         {duration:240, easing:'ease-out'}
       );
-    }
-
-    function centerNo(){
-      noBtn.style.left = '50%';
-      noBtn.style.top = '67%';
-      noBtn.style.transform = 'translateX(-50%)';
-    }
-    centerNo();
-
-    noBtn.addEventListener('click', (e)=>{
-      e.preventDefault();
-      teleportNo();
     });
+
+    /* Ensure NO stays visible on resize/orientation changes */
+    window.addEventListener('resize', ()=>placeNoSafely(false));
+
   </script>
 </body>
 </html>
