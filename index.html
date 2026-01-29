@@ -185,6 +185,7 @@
       -webkit-overflow-scrolling: touch;
       padding-right: 10px;
       flex:1;
+      touch-action: pan-y; /* helps iOS scrolling */
     }
 
     .topline{
@@ -498,13 +499,8 @@
       text-align:center;
     }
 
-    /* Choose the Vibe page */
-    .vibe-wrap{
-      flex: 1;
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-    }
+    /* Choose the Vibe page (FIXED: scroll + clickable options) */
+    .vibe-wrap{ flex:1; display:flex; flex-direction:column; gap:12px; min-height:0; }
     .vibe-grid{
       display:grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -516,20 +512,21 @@
       background: rgba(255,255,255,.68);
       border: 1px solid rgba(240,170,200,.26);
       box-shadow: 0 12px 22px rgba(0,0,0,.05);
-      padding: 12px 12px 12px 12px;
+      padding: 12px;
       display:flex;
       flex-direction:column;
       gap:10px;
-      min-height: 86px;
+      min-height: 96px;
       position:relative;
       overflow:hidden;
+      touch-action: manipulation; /* makes taps feel responsive */
     }
     .vibe-card::after{
       content:"";
       position:absolute;
       inset:0;
       opacity:.0;
-      background: radial-gradient(600px 120px at 10% 0%, rgba(255,77,141,.14), transparent 55%);
+      background: radial-gradient(600px 140px at 10% 0%, rgba(255,77,141,.14), transparent 55%);
       transition: opacity .2s ease;
       pointer-events:none;
     }
@@ -541,17 +538,8 @@
       align-items:center;
       justify-content:space-between;
       flex-wrap:wrap;
-    }
-    .vibe-pill{
-      padding: 8px 10px;
-      border-radius: 999px;
-      font-weight: 900;
-      font-size: 12px;
-      color: rgba(90, 20, 55, .92);
-      background: rgba(255,77,141,.10);
-      border: 1px solid rgba(255,77,141,.22);
-      box-shadow: 0 10px 18px rgba(0,0,0,.04);
-      white-space:nowrap;
+      position:relative;
+      z-index:1;
     }
     .vibe-divider{
       opacity:.55;
@@ -559,11 +547,40 @@
       font-weight: 900;
       letter-spacing:.02em;
     }
+
+    .vibe-option{
+      border: 1px solid rgba(255,77,141,.22);
+      background: rgba(255,77,141,.10);
+      color: rgba(90, 20, 55, .92);
+      box-shadow: 0 10px 18px rgba(0,0,0,.04);
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: 12px;
+      cursor:pointer;
+      transition: transform .10s ease, filter .12s ease, background .12s ease, border-color .12s ease, opacity .12s ease;
+      -webkit-tap-highlight-color: transparent;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .vibe-option:active{ transform: scale(.98); }
+    .vibe-option.picked{
+      background: rgba(255,77,141,.20);
+      border-color: rgba(255,77,141,.34);
+      filter: brightness(1.03);
+    }
+    .vibe-option.dim{
+      opacity:.55;
+      filter: saturate(.85);
+    }
+
     .vibe-hint{
       margin-top:auto;
       font-size: 12.5px;
-      color: rgba(60,25,45,.68);
+      color: rgba(60,25,45,.70);
       line-height: 1.35;
+      position:relative;
+      z-index:1;
     }
 
     /* Constellation */
@@ -712,7 +729,7 @@
       .flourish{ width:140px; height:140px; }
       .jar-btn{ height:52px; font-size:15px; }
       .vibe-grid{ grid-template-columns: 1fr; }
-      .vibe-card{ min-height: 78px; }
+      .vibe-card{ min-height: 86px; }
     }
   </style>
 </head>
@@ -865,7 +882,7 @@
               </div>
             </section>
 
-            <!-- PAGE 5: Choose the Vibe (NEW) -->
+            <!-- PAGE 5: Choose the Vibe -->
             <section class="page" data-index="4" style="z-index:3">
               <div class="content">
                 <div class="topline">
@@ -879,10 +896,10 @@
 
                 <div class="vibe-wrap">
                   <p class="note" style="margin:0 auto; text-align:center; max-width:62ch">
-                    Just for fun. Pick which side you are… or which one you feel today.
+                    Tap a side — it’ll darken a bit so you can see what you picked.
                   </p>
 
-                  <div class="scrollable" style="padding-right:10px">
+                  <div class="scrollable">
                     <div class="vibe-grid" id="vibeGrid"></div>
                     <div style="height:10px"></div>
                   </div>
@@ -1035,6 +1052,17 @@
 
     goTo(0);
 
+    /* Helpers */
+    function shuffle(arr){
+      const a = arr.slice();
+      for(let i=a.length-1;i>0;i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [a[i],a[j]] = [a[j],a[i]];
+      }
+      return a;
+    }
+    function randomFrom(a){ return a[Math.floor(Math.random()*a.length)] }
+
     /* Reasons list (random order) */
     const reasons = [
       "How easy you are to talk to",
@@ -1053,14 +1081,6 @@
       "How you make simple moments feel special",
       "The way you’re unapologetically you"
     ];
-    function shuffle(arr){
-      const a = arr.slice();
-      for(let i=a.length-1;i>0;i--){
-        const j = Math.floor(Math.random()*(i+1));
-        [a[i],a[j]] = [a[j],a[i]];
-      }
-      return a;
-    }
     const reasonsGrid = document.getElementById('reasonsGrid');
     reasonsGrid.innerHTML = "";
     shuffle(reasons).forEach((text, idx)=>{
@@ -1177,7 +1197,6 @@
     ];
     const jarBtn  = document.getElementById('jarBtn');
     const jarNote = document.getElementById('jarNote');
-    function randomFrom(a){ return a[Math.floor(Math.random()*a.length)] }
     if(jarBtn){
       jarBtn.addEventListener('click', ()=>{
         jarNote.textContent = randomFrom(jarNotes);
@@ -1185,7 +1204,7 @@
       });
     }
 
-    /* Choose the Vibe (randomize order on load) */
+    /* Choose the Vibe (randomize order on load + tap to select) */
     const vibePairs = [
       ["Late nights 🌙", "Early mornings ☀️"],
       ["Staying in 🛋️", "Going out ✨"],
@@ -1198,21 +1217,44 @@
       ["Little spoon 🤍", "Big spoon 🫶"],
       ["Movie night 🎬", "Game night 🎮"]
     ];
-
     const vibeGrid = document.getElementById('vibeGrid');
     if(vibeGrid){
       vibeGrid.innerHTML = "";
       shuffle(vibePairs).forEach((pair)=>{
         const card = document.createElement('div');
         card.className = "vibe-card";
+
+        const leftId = "l" + Math.random().toString(16).slice(2);
+        const rightId = "r" + Math.random().toString(16).slice(2);
+
         card.innerHTML = `
           <div class="vibe-pair">
-            <span class="vibe-pill">${pair[0]}</span>
+            <button class="vibe-option" type="button" data-side="left" aria-label="${pair[0]}">${pair[0]}</button>
             <span class="vibe-divider">/</span>
-            <span class="vibe-pill">${pair[1]}</span>
+            <button class="vibe-option" type="button" data-side="right" aria-label="${pair[1]}">${pair[1]}</button>
           </div>
-          <div class="vibe-hint">Which one are you?</div>
+          <div class="vibe-hint">Pick a side (you can change it).</div>
         `;
+
+        // selection behavior
+        const opts = Array.from(card.querySelectorAll('.vibe-option'));
+        opts.forEach(btn=>{
+          btn.addEventListener('click', (e)=>{
+            e.preventDefault();
+            e.stopPropagation();
+
+            // mark clicked as picked; dim the other
+            opts.forEach(o=>{
+              o.classList.remove('picked','dim');
+            });
+
+            btn.classList.add('picked');
+            opts.forEach(o=>{
+              if(o !== btn) o.classList.add('dim');
+            });
+          }, {passive:false});
+        });
+
         vibeGrid.appendChild(card);
       });
     }
