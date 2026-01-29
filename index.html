@@ -1321,114 +1321,184 @@
       constellation.appendChild(s);
     });
 
-    /* FINAL PAGE: continuous fireworks after YES */
-    const yesBtn = document.getElementById('yesBtn');
-    const noBtn  = document.getElementById('noBtn');
-    const yesMsg = document.getElementById('yesMsg');
-    const fwCanvas = document.getElementById('fireworks');
-    const fwCtx = fwCanvas.getContext('2d');
+    /* FINAL PAGE: realistic fireworks (launch -> explode -> fall), continuous after YES */
+const yesBtn = document.getElementById('yesBtn');
+const noBtn  = document.getElementById('noBtn');
+const yesMsg = document.getElementById('yesMsg');
+const fwCanvas = document.getElementById('fireworks');
+const fwCtx = fwCanvas.getContext('2d');
 
-    let particles = [];
-    let fireworksOn = false;
-    let burstTimer = null;
-    let animating = false;
+let fireworksOn = false;
+let animating = false;
 
-    function resizeFireworks(){
-      const rect = fwCanvas.getBoundingClientRect();
-      const dpr = Math.max(1, window.devicePixelRatio || 1);
-      fwCanvas.width  = Math.floor(rect.width  * dpr);
-      fwCanvas.height = Math.floor(rect.height * dpr);
-    }
+let rockets = [];   // launch phase
+let sparks  = [];   // explosion phase
+let launchTimer = null;
 
-    function burst(x, y){
-      const dpr = Math.max(1, window.devicePixelRatio || 1);
-      const count = 70;
-      for(let i=0;i<count;i++){
-        const a = Math.random()*Math.PI*2;
-        const sp = (Math.random()*3.0 + 2.4) * dpr;
-        particles.push({
-          x, y,
-          vx: Math.cos(a)*sp,
-          vy: Math.sin(a)*sp,
-          life: 70 + Math.random()*40,
-          age: 0,
-          size: (Math.random()*2.2 + 1.1) * dpr,
-          hue: 320 + Math.random()*35
-        });
-      }
-      if(particles.length > 2600) particles.splice(0, particles.length - 2600);
-    }
+function rand(min, max){ return min + Math.random() * (max - min); }
 
-    function burstAroundYes(){
-      resizeFireworks();
-      const dpr = Math.max(1, window.devicePixelRatio || 1);
+function resizeFireworks(){
+  const rect = fwCanvas.getBoundingClientRect();
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  fwCanvas.width  = Math.floor(rect.width  * dpr);
+  fwCanvas.height = Math.floor(rect.height * dpr);
+  fwCtx.setTransform(1,0,0,1,0,0);
+}
+resizeFireworks();
 
-      const host = fwCanvas.getBoundingClientRect();
-      const r = yesBtn.getBoundingClientRect();
-      const cx = ((r.left + r.right)/2 - host.left) * dpr;
-      const cy = ((r.top + r.bottom)/2 - host.top) * dpr;
+function launchRocket(x){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  rockets.push({
+    x,
+    y: fwCanvas.height + 16*dpr,
+    vx: rand(-0.22, 0.22) * dpr,
+    vy: rand(-8.4, -7.2) * dpr,          // realistic launch speed
+    ay: 0.10 * dpr,                      // gravity
+    explodeY: rand(fwCanvas.height*0.18, fwCanvas.height*0.42),
+    life: 240
+  });
+}
 
-      burst(cx, cy);
-      burst(cx - fwCanvas.width*0.18, cy - fwCanvas.height*0.10);
-      burst(cx + fwCanvas.width*0.18, cy - fwCanvas.height*0.10);
-    }
+function explode(x, y){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const count = Math.floor(rand(52, 78)); // enough to read as “a firework”
+  const baseHue = rand(310, 355);
 
-    function animate(){
-      if(!animating) return;
-
-      fwCtx.globalCompositeOperation = 'source-over';
-      fwCtx.fillStyle = 'rgba(255,255,255,0.10)';
-      fwCtx.fillRect(0,0,fwCanvas.width, fwCanvas.height);
-
-      fwCtx.globalCompositeOperation = 'lighter';
-      for(let i=particles.length-1;i>=0;i--){
-        const p = particles[i];
-        p.age++;
-        p.vy += 0.06;
-        p.x += p.vx;
-        p.y += p.vy;
-
-        const t = 1 - (p.age / p.life);
-        const alpha = Math.max(0, t);
-
-        fwCtx.beginPath();
-        fwCtx.arc(p.x, p.y, p.size, 0, Math.PI*2);
-        fwCtx.fillStyle = `hsla(${p.hue}, 95%, 72%, ${alpha})`;
-        fwCtx.fill();
-
-        if(p.age >= p.life) particles.splice(i,1);
-      }
-      fwCtx.globalCompositeOperation = 'source-over';
-
-      if(!fireworksOn && particles.length === 0){
-        animating = false;
-        fwCtx.clearRect(0,0,fwCanvas.width, fwCanvas.height);
-        return;
-      }
-      requestAnimationFrame(animate);
-    }
-
-    function startFireworks(){
-      if(fireworksOn) return;
-      fireworksOn = true;
-      resizeFireworks();
-
-      if(!animating){
-        animating = true;
-        fwCtx.clearRect(0,0,fwCanvas.width, fwCanvas.height);
-        requestAnimationFrame(animate);
-      }
-
-      burstAroundYes();
-      burstTimer = setInterval(burstAroundYes, 420);
-    }
-
-    yesBtn.addEventListener('click', ()=>{
-      yesMsg.style.display = 'block';
-      startFireworks();
-      yesBtn.animate([{transform:'scale(1)'},{transform:'scale(1.02)'},{transform:'scale(1)'}], {duration:240, easing:'ease-out'});
+  for(let i=0;i<count;i++){
+    const a = Math.random() * Math.PI * 2;
+    const speed = rand(2.2, 4.3) * dpr;
+    sparks.push({
+      x, y,
+      vx: Math.cos(a)*speed,
+      vy: Math.sin(a)*speed,
+      ay: 0.085 * dpr,      // gravity for sparks
+      drag: 0.986,          // slows outward motion
+      age: 0,
+      life: rand(70, 105),  // ~1.2–1.8s fall/drift
+      size: rand(1.2, 2.4) * dpr,
+      hue: baseHue + rand(-10, 18),
+      alpha: 1
     });
+  }
 
+  if(sparks.length > 3200) sparks.splice(0, sparks.length - 3200);
+}
+
+function scheduleLaunches(){
+  // cadence: explode/drift for ~1–2s, then ~0.5s later another
+  // This interval is the “pause between launches”.
+  launchTimer = setInterval(()=>{
+    if(!fireworksOn) return;
+    resizeFireworks();
+
+    // 1 firework usually, 2 sometimes (clearly distinct positions)
+    const n = Math.random() < 0.35 ? 2 : 1;
+    for(let k=0;k<n;k++){
+      const x = rand(fwCanvas.width*0.15, fwCanvas.width*0.85);
+      launchRocket(x);
+    }
+
+    if(!animating){
+      animating = true;
+      requestAnimationFrame(animateFireworks);
+    }
+  }, 620); // <-- “half a second-ish” between launches (tweak 520–800)
+}
+
+function startFireworks(){
+  if(fireworksOn) return;
+  fireworksOn = true;
+
+  resizeFireworks();
+
+  // initial burst: two rockets so it’s obviously “multiple fireworks”
+  launchRocket(fwCanvas.width * 0.33);
+  launchRocket(fwCanvas.width * 0.67);
+
+  if(!animating){
+    animating = true;
+    requestAnimationFrame(animateFireworks);
+  }
+
+  scheduleLaunches();
+}
+
+function animateFireworks(){
+  if(!animating) return;
+
+  // soft trail fade (lower alpha = longer trails / smoother look)
+  fwCtx.globalCompositeOperation = 'source-over';
+  fwCtx.fillStyle = 'rgba(255,255,255,0.10)';
+  fwCtx.fillRect(0,0,fwCanvas.width, fwCanvas.height);
+
+  // rockets
+  for(let i=rockets.length-1;i>=0;i--){
+    const r = rockets[i];
+    r.life--;
+
+    r.vy += r.ay;
+    r.x  += r.vx;
+    r.y  += r.vy;
+
+    // draw rocket + tail
+    fwCtx.beginPath();
+    fwCtx.arc(r.x, r.y, 2.2, 0, Math.PI*2);
+    fwCtx.fillStyle = 'rgba(255,77,141,0.90)';
+    fwCtx.fill();
+
+    fwCtx.beginPath();
+    fwCtx.moveTo(r.x, r.y);
+    fwCtx.lineTo(r.x - r.vx*2.2, r.y - r.vy*2.2);
+    fwCtx.strokeStyle = 'rgba(255,133,168,0.55)';
+    fwCtx.lineWidth = 2;
+    fwCtx.stroke();
+
+    // explode near target height or when slowing
+    if(r.y <= r.explodeY || r.vy > -1.6 || r.life <= 0){
+      explode(r.x, r.y);
+      rockets.splice(i,1);
+    }
+  }
+
+  // sparks
+  fwCtx.globalCompositeOperation = 'lighter';
+  for(let i=sparks.length-1;i>=0;i--){
+    const p = sparks[i];
+    p.age++;
+
+    p.vx *= p.drag;
+    p.vy *= p.drag;
+    p.vy += p.ay;
+
+    p.x += p.vx;
+    p.y += p.vy;
+
+    const t = 1 - (p.age / p.life);
+    p.alpha = Math.max(0, t);
+
+    fwCtx.beginPath();
+    fwCtx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+    fwCtx.fillStyle = `hsla(${p.hue}, 95%, 72%, ${p.alpha})`;
+    fwCtx.fill();
+
+    if(p.age >= p.life) sparks.splice(i,1);
+  }
+  fwCtx.globalCompositeOperation = 'source-over';
+
+  if(!fireworksOn && rockets.length === 0 && sparks.length === 0){
+    animating = false;
+    fwCtx.clearRect(0,0,fwCanvas.width, fwCanvas.height);
+    return;
+  }
+
+  requestAnimationFrame(animateFireworks);
+}
+
+yesBtn.addEventListener('click', ()=>{
+  yesMsg.style.display = 'block';
+  startFireworks();
+  yesBtn.animate([{transform:'scale(1)'},{transform:'scale(1.02)'},{transform:'scale(1)'}], {duration:240, easing:'ease-out'});
+});
     /* NO teleports safely (never overlaps YES; always below) */
     function placeNoSafely(randomize){
       const cta = document.getElementById('valCta');
