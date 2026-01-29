@@ -185,7 +185,7 @@
       -webkit-overflow-scrolling: touch;
       padding-right: 10px;
       flex:1;
-      touch-action: pan-y; /* helps iOS scrolling */
+      touch-action: pan-y;
     }
 
     .topline{
@@ -499,7 +499,7 @@
       text-align:center;
     }
 
-    /* Choose the Vibe page (FIXED: scroll + clickable options) */
+    /* Choose the Vibe page (STACKED choices) */
     .vibe-wrap{ flex:1; display:flex; flex-direction:column; gap:12px; min-height:0; }
     .vibe-grid{
       display:grid;
@@ -516,57 +516,52 @@
       display:flex;
       flex-direction:column;
       gap:10px;
-      min-height: 96px;
+      min-height: 120px;
       position:relative;
       overflow:hidden;
-      touch-action: manipulation; /* makes taps feel responsive */
+      touch-action: manipulation;
     }
     .vibe-card::after{
       content:"";
       position:absolute;
       inset:0;
       opacity:.0;
-      background: radial-gradient(600px 140px at 10% 0%, rgba(255,77,141,.14), transparent 55%);
+      background: radial-gradient(600px 160px at 10% 0%, rgba(255,77,141,.14), transparent 55%);
       transition: opacity .2s ease;
       pointer-events:none;
     }
     .vibe-card:hover::after{ opacity:.9; }
 
-    .vibe-pair{
+    .vibe-stack{
       display:flex;
+      flex-direction:column;
       gap:10px;
-      align-items:center;
-      justify-content:space-between;
-      flex-wrap:wrap;
       position:relative;
       z-index:1;
-    }
-    .vibe-divider{
-      opacity:.55;
-      color: rgba(90, 20, 55, .75);
-      font-weight: 900;
-      letter-spacing:.02em;
+      align-items:flex-start;
     }
 
     .vibe-option{
+      width:100%;
       border: 1px solid rgba(255,77,141,.22);
       background: rgba(255,77,141,.10);
       color: rgba(90, 20, 55, .92);
       box-shadow: 0 10px 18px rgba(0,0,0,.04);
-      padding: 8px 10px;
+      padding: 10px 12px;
       border-radius: 999px;
       font-weight: 900;
-      font-size: 12px;
+      font-size: 13px;
       cursor:pointer;
       transition: transform .10s ease, filter .12s ease, background .12s ease, border-color .12s ease, opacity .12s ease;
       -webkit-tap-highlight-color: transparent;
       user-select:none;
+      text-align:center;
       white-space:nowrap;
     }
-    .vibe-option:active{ transform: scale(.98); }
+    .vibe-option:active{ transform: scale(.99); }
     .vibe-option.picked{
-      background: rgba(255,77,141,.20);
-      border-color: rgba(255,77,141,.34);
+      background: rgba(255,77,141,.22);
+      border-color: rgba(255,77,141,.36);
       filter: brightness(1.03);
     }
     .vibe-option.dim{
@@ -729,7 +724,7 @@
       .flourish{ width:140px; height:140px; }
       .jar-btn{ height:52px; font-size:15px; }
       .vibe-grid{ grid-template-columns: 1fr; }
-      .vibe-card{ min-height: 86px; }
+      .vibe-card{ min-height: 112px; }
     }
   </style>
 </head>
@@ -896,7 +891,7 @@
 
                 <div class="vibe-wrap">
                   <p class="note" style="margin:0 auto; text-align:center; max-width:62ch">
-                    Tap a side — it’ll darken a bit so you can see what you picked.
+                    Tap one. The one you pick will get darker.
                   </p>
 
                   <div class="scrollable">
@@ -1204,7 +1199,7 @@
       });
     }
 
-    /* Choose the Vibe (randomize order on load + tap to select) */
+    /* Choose the Vibe (randomize order on load + stacked buttons) */
     const vibePairs = [
       ["Late nights 🌙", "Early mornings ☀️"],
       ["Staying in 🛋️", "Going out ✨"],
@@ -1224,34 +1219,22 @@
         const card = document.createElement('div');
         card.className = "vibe-card";
 
-        const leftId = "l" + Math.random().toString(16).slice(2);
-        const rightId = "r" + Math.random().toString(16).slice(2);
-
         card.innerHTML = `
-          <div class="vibe-pair">
-            <button class="vibe-option" type="button" data-side="left" aria-label="${pair[0]}">${pair[0]}</button>
-            <span class="vibe-divider">/</span>
-            <button class="vibe-option" type="button" data-side="right" aria-label="${pair[1]}">${pair[1]}</button>
+          <div class="vibe-stack">
+            <button class="vibe-option" type="button">${pair[0]}</button>
+            <button class="vibe-option" type="button">${pair[1]}</button>
           </div>
-          <div class="vibe-hint">Pick a side (you can change it).</div>
+          <div class="vibe-hint">Pick one (you can change it).</div>
         `;
 
-        // selection behavior
         const opts = Array.from(card.querySelectorAll('.vibe-option'));
         opts.forEach(btn=>{
           btn.addEventListener('click', (e)=>{
             e.preventDefault();
             e.stopPropagation();
-
-            // mark clicked as picked; dim the other
-            opts.forEach(o=>{
-              o.classList.remove('picked','dim');
-            });
-
+            opts.forEach(o=>o.classList.remove('picked','dim'));
             btn.classList.add('picked');
-            opts.forEach(o=>{
-              if(o !== btn) o.classList.add('dim');
-            });
+            opts.forEach(o=>{ if(o !== btn) o.classList.add('dim'); });
           }, {passive:false});
         });
 
