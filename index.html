@@ -1374,7 +1374,7 @@ function explode(x, y){
       ay: 0.085 * dpr,      // gravity for sparks
       drag: 0.986,          // slows outward motion
       age: 0,
-      life: rand(70, 105),  // ~1.2–1.8s fall/drift
+      life: rand(90, 135),  // ~1.2–1.8s fall/drift
       size: rand(1.2, 2.4) * dpr,
       hue: baseHue + rand(-10, 18),
       alpha: 1
@@ -1402,7 +1402,7 @@ function scheduleLaunches(){
       animating = true;
       requestAnimationFrame(animateFireworks);
     }
-  }, 620); // <-- “half a second-ish” between launches (tweak 520–800)
+  }, 1000); // <-- time between launches
 }
 
 function startFireworks(){
@@ -1411,7 +1411,7 @@ function startFireworks(){
 
   resizeFireworks();
 
-  // initial burst: two rockets so it’s obviously “multiple fireworks”
+  // initial burst: two rockets so it’s obviously multiple fireworks
   launchRocket(fwCanvas.width * 0.33);
   launchRocket(fwCanvas.width * 0.67);
 
