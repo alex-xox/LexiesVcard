@@ -613,20 +613,28 @@
     .spark:hover{ transform: rotate(45deg) scale(1.06); }
 
     .tooltip{
-      position:absolute;
-      left:16px; right:16px; bottom:14px;
-      padding:10px 12px;
-      border-radius: 14px;
-      background: rgba(255,255,255,.88);
-      border: 1px solid rgba(240,170,200,.35);
-      box-shadow: 0 18px 40px rgba(0,0,0,.08);
-      font-size: 13px;
-      color: rgba(50,20,35,.9);
-      display:flex;
-      gap:10px;
-      align-items:flex-start;
-      z-index:3;
-    }
+  position:absolute;
+  left:16px;
+  right:16px;
+  bottom:14px;
+
+  min-height: 92px;
+  padding:14px 16px;
+
+  border-radius: 14px;
+  background: rgba(255,255,255,.88);
+  border: 1px solid rgba(240,170,200,.35);
+  box-shadow: 0 18px 40px rgba(0,0,0,.08);
+
+  font-size: 13px;
+  color: rgba(50,20,35,.9);
+
+  display:flex;
+  align-items:center;
+  gap:10px;
+
+  z-index:3;
+}
     .tooltip strong{font-weight:900}
     .tooltip .pill{
       margin-left:auto;
