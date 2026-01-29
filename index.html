@@ -300,7 +300,7 @@
       font-family: "Playfair Display", serif;
       font-size: 12.5px;
       line-height: 1.7;
-      color: rgba(90, 20, 55, .18); /* slightly darker */
+      color: rgba(90, 20, 55, .18);
       user-select:none;
     }
     .secrets .line{
@@ -494,69 +494,18 @@
       white-space:nowrap;
     }
 
-    /* Final page buttons + fireworks */
-    .cta{
+    /* FINAL PAGE (Valentine) */
+    .valentine-cta{
+      flex:1;
       display:flex;
       flex-direction:column;
       align-items:center;
       justify-content:center;
       gap:14px;
-      flex:1;
-      padding-bottom: 10px;
       position:relative;
-      overflow:hidden;
+      overflow:hidden; /* keep fireworks clipped */
+      padding: 6px 0 10px;
     }
-    .big-yes{
-      width:min(440px, 88%);
-      height:90px;
-      border:0;
-      border-radius: 18px;
-      font-weight: 1000;
-      font-size: 30px;
-      color:white;
-      cursor:pointer;
-      background: linear-gradient(135deg, rgba(255,77,141,.98), rgba(255,133,168,.82));
-      box-shadow: 0 22px 46px rgba(255,77,141,.28);
-      transition: transform .12s ease, filter .12s ease;
-      position:relative;
-      z-index:3;
-    }
-    .big-yes:hover{ filter: brightness(1.02); }
-    .big-yes:active{ transform: scale(.99); }
-
-    .small-no{
-      position:absolute;
-      width:124px;
-      height:40px;
-      border-radius: 999px;
-      border: 1px solid rgba(60,60,60,.35);
-      background: rgba(55,55,60,.92);
-      color: rgba(255,255,255,.92);
-      font-weight:900;
-      cursor:pointer;
-      box-shadow: 0 12px 24px rgba(0,0,0,.12);
-      z-index:2;
-      left:50%;
-      top: 78%;
-      transform: translateX(-50%);
-    }
-    .small-no:hover{ filter: brightness(1.03); }
-    .small-no:active{ transform: translateX(-50%) scale(.98); }
-
-    .success{
-      margin-top: 8px;
-      padding: 10px 12px;
-      border-radius: 14px;
-      background: rgba(255,255,255,.82);
-      border: 1px solid rgba(240,170,200,.28);
-      color: rgba(50,20,35,.9);
-      font-size: 14px;
-      max-width: 60ch;
-      text-align:center;
-      display:none;
-      z-index:3;
-    }
-
     #fireworks{
       position:absolute;
       inset:0;
@@ -564,6 +513,61 @@
       height:100%;
       pointer-events:none;
       z-index:1;
+    }
+    .yes-btn{
+      width:min(460px, 88%);
+      height:92px;
+      border:0;
+      border-radius: 20px;
+      font-weight: 1000;
+      font-size: 30px;
+      letter-spacing:.02em;
+      color:white;
+      cursor:pointer;
+      background: linear-gradient(135deg, rgba(255,77,141,.98), rgba(255,133,168,.84));
+      box-shadow: 0 22px 46px rgba(255,77,141,.28);
+      transition: transform .12s ease, filter .12s ease;
+      position:relative;
+      z-index:3;
+    }
+    .yes-btn:hover{ filter: brightness(1.02); }
+    .yes-btn:active{ transform: scale(.99); }
+
+    .no-btn{
+      width:130px;
+      height:40px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,.18);
+      background: rgba(55,55,60,.92);
+      color: rgba(255,255,255,.92);
+      font-weight:900;
+      cursor:pointer;
+      box-shadow: 0 12px 24px rgba(0,0,0,.12);
+      z-index:2;
+      position:absolute; /* we place it */
+      left:50%;
+      transform: translateX(-50%);
+    }
+    .no-btn::after{
+      content:" :(";
+      opacity:.85;
+      font-weight:900;
+    }
+
+    .yes-msg{
+      display:none;
+      position:relative;
+      z-index:3;
+      max-width: 60ch;
+      text-align:center;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.86);
+      border: 1px solid rgba(240,170,200,.30);
+      box-shadow: 0 14px 30px rgba(0,0,0,.06);
+      color: rgba(50,20,35,.92);
+      font-size: 14px;
+      line-height: 1.35;
     }
 
     /* Mobile tweaks */
@@ -573,6 +577,7 @@
       .hint{ top:-46px; font-size:12px; }
       .nav-zone{ width:14%; }
       .constellation{ height: 260px; padding-bottom: 78px; }
+      .yes-btn{ height:86px; font-size:28px; }
     }
   </style>
 </head>
@@ -594,7 +599,7 @@
           <div class="pages" id="pages">
 
             <!-- PAGE 1: Cover -->
-            <section class="page" data-index="0" style="z-index:7">
+            <section class="page" data-index="0" style="z-index:6">
               <div class="content">
                 <div class="topline">
                   <span class="badge">Valentine’s Card</span>
@@ -620,7 +625,7 @@
             </section>
 
             <!-- PAGE 2: 15 reasons + subtle secrets -->
-            <section class="page" data-index="1" style="z-index:6">
+            <section class="page" data-index="1" style="z-index:5">
               <div class="content">
                 <div class="topline">
                   <span class="badge">Chapter One</span>
@@ -649,7 +654,7 @@
             </section>
 
             <!-- PAGE 3: Scratch (ONLY) -->
-            <section class="page" data-index="2" style="z-index:5">
+            <section class="page" data-index="2" style="z-index:4">
               <div class="content">
                 <div class="topline">
                   <span class="badge">Interactive</span>
@@ -685,8 +690,8 @@
               </div>
             </section>
 
-            <!-- PAGE 4: Compliment Jar (OWN PAGE) -->
-            <section class="page" data-index="3" style="z-index:4">
+            <!-- PAGE 4: Compliment Jar -->
+            <section class="page" data-index="3" style="z-index:3">
               <div class="content">
                 <div class="topline">
                   <span class="badge">Interactive</span>
@@ -711,7 +716,7 @@
             </section>
 
             <!-- PAGE 5: Constellation -->
-            <section class="page" data-index="4" style="z-index:3">
+            <section class="page" data-index="4" style="z-index:2">
               <div class="content">
                 <div class="topline">
                   <span class="badge">Interactive</span>
@@ -739,27 +744,34 @@
               </div>
             </section>
 
-            <!-- PAGE 6: Valentine question -->
-            <section class="page" data-index="5" style="z-index:2">
-              <div class="content" style="position:relative">
+            <!-- PAGE 6: FINAL VALENTINE PAGE -->
+            <section class="page" data-index="5" style="z-index:1">
+              <div class="content">
                 <div class="topline">
                   <span class="badge">Final Page</span>
-                  <span>Question Time</span>
+                  <span>One question</span>
                 </div>
 
                 <h2 style="font-family:'Playfair Display',serif; font-size:30px; color:rgba(70,25,50,.92); text-align:center">
                   Will you be my valentine?
                 </h2>
 
-                <div class="cta" id="ctaArea">
+                <div class="valentine-cta" id="valCta">
                   <canvas id="fireworks"></canvas>
-                  <button class="big-yes" id="yesBtn">YES 💖</button>
-                  <div class="success" id="successMsg">
-                    YAY! 💗<br>
-                    Now come here so I can celebrate properly.
+
+                  <button class="yes-btn" id="yesBtn" type="button">yes 💖</button>
+
+                  <div class="yes-msg" id="yesMsg">
+                    YAY!! 💗<br>
+                    You just made my whole day. Come here 🥺
                   </div>
-                  <button class="small-no" id="noBtn" type="button">no</button>
+
+                  <button class="no-btn" id="noBtn" type="button">no</button>
                 </div>
+
+                <p class="note" style="text-align:center; margin-top:auto; opacity:.9; max-width:none">
+                  (If “no” runs away… it’s just shy.)
+                </p>
               </div>
             </section>
 
@@ -887,14 +899,13 @@
       reasonsGrid.appendChild(item);
     });
 
-    /* Scratch (fully opaque cover; NO visible instruction text drawn on top) */
+    /* Scratch (fully opaque cover; no visible “scratch here” text) */
     const scratchArea = document.getElementById('scratchArea');
     const canvas = document.getElementById('scratchCanvas');
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
     let isDrawing = false;
 
     function drawScratchCover(){
-      // Opaque pink cover + subtle shimmer/noise
       const dpr = Math.max(1, window.devicePixelRatio || 1);
 
       ctx.setTransform(1,0,0,1,0,0);
@@ -907,7 +918,6 @@
       ctx.fillStyle = grad;
       ctx.fillRect(0,0,canvas.width,canvas.height);
 
-      // shimmer streaks
       ctx.globalAlpha = 0.16;
       for(let i=0;i<16;i++){
         const y = (i/16)*canvas.height;
@@ -919,7 +929,6 @@
         ctx.stroke();
       }
 
-      // tiny speckle noise
       ctx.globalAlpha = 0.14;
       for(let i=0;i<900;i++){
         const x = Math.random()*canvas.width;
@@ -930,7 +939,6 @@
         ctx.fillStyle = (Math.random() > 0.5) ? 'rgba(255,255,255,.75)' : 'rgba(255,255,255,.35)';
         ctx.fill();
       }
-
       ctx.globalAlpha = 1;
     }
 
@@ -1036,51 +1044,50 @@
       constellation.appendChild(s);
     });
 
-    /* Final page: YES/NO + fireworks */
+    /* FINAL PAGE: YES fireworks + message, NO teleports (never overlaps YES; always below) */
     const yesBtn = document.getElementById('yesBtn');
-    const noBtn = document.getElementById('noBtn');
-    const successMsg = document.getElementById('successMsg');
-
-    // Fireworks (simple + pretty)
+    const noBtn  = document.getElementById('noBtn');
+    const yesMsg = document.getElementById('yesMsg');
     const fwCanvas = document.getElementById('fireworks');
     const fwCtx = fwCanvas.getContext('2d');
-    let fwParticles = [];
-    let fwAnimating = false;
+
+    let particles = [];
+    let animating = false;
 
     function resizeFireworks(){
       const rect = fwCanvas.getBoundingClientRect();
       const dpr = Math.max(1, window.devicePixelRatio || 1);
-      fwCanvas.width = Math.floor(rect.width * dpr);
+      fwCanvas.width  = Math.floor(rect.width  * dpr);
       fwCanvas.height = Math.floor(rect.height * dpr);
     }
 
     function burst(x, y){
       const dpr = Math.max(1, window.devicePixelRatio || 1);
-      const count = 70;
+      const count = 80;
       for(let i=0;i<count;i++){
-        const a = Math.random() * Math.PI * 2;
-        const sp = (Math.random()*3.2 + 2.4) * dpr;
-        fwParticles.push({
+        const a = Math.random()*Math.PI*2;
+        const sp = (Math.random()*3.2 + 2.6) * dpr;
+        particles.push({
           x, y,
           vx: Math.cos(a)*sp,
           vy: Math.sin(a)*sp,
-          life: 70 + Math.random()*30,
+          life: 70 + Math.random()*35,
           age: 0,
           size: (Math.random()*2.2 + 1.2) * dpr,
-          hue: 320 + Math.random()*30
+          hue: 320 + Math.random()*35
         });
       }
     }
 
-    function animateFireworks(){
-      if(!fwAnimating) return;
+    function animate(){
+      if(!animating) return;
       fwCtx.clearRect(0,0,fwCanvas.width, fwCanvas.height);
 
       fwCtx.globalCompositeOperation = 'lighter';
-      for(let i=fwParticles.length-1;i>=0;i--){
-        const p = fwParticles[i];
+      for(let i=particles.length-1;i>=0;i--){
+        const p = particles[i];
         p.age++;
-        p.vy += 0.06; // gravity
+        p.vy += 0.06;   // gravity
         p.x += p.vx;
         p.y += p.vy;
 
@@ -1092,55 +1099,52 @@
         fwCtx.fillStyle = `hsla(${p.hue}, 95%, 72%, ${alpha})`;
         fwCtx.fill();
 
-        if(p.age >= p.life) fwParticles.splice(i,1);
+        if(p.age >= p.life) particles.splice(i,1);
       }
       fwCtx.globalCompositeOperation = 'source-over';
 
-      if(fwParticles.length === 0){
-        fwAnimating = false;
+      if(particles.length === 0){
+        animating = false;
         fwCtx.clearRect(0,0,fwCanvas.width, fwCanvas.height);
         return;
       }
-      requestAnimationFrame(animateFireworks);
+      requestAnimationFrame(animate);
     }
 
-    function runFireworks(){
+    function fireworksAroundYes(){
       resizeFireworks();
       const dpr = Math.max(1, window.devicePixelRatio || 1);
-      const w = fwCanvas.width, h = fwCanvas.height;
 
-      fwParticles = [];
-      fwAnimating = true;
-
-      // 3 quick bursts around the YES button area
-      const rect = yesBtn.getBoundingClientRect();
       const host = fwCanvas.getBoundingClientRect();
+      const r = yesBtn.getBoundingClientRect();
+      const cx = ((r.left + r.right)/2 - host.left) * dpr;
+      const cy = ((r.top + r.bottom)/2 - host.top) * dpr;
 
-      const cx = ((rect.left + rect.right)/2 - host.left) * dpr;
-      const cy = ((rect.top + rect.bottom)/2 - host.top) * dpr;
+      particles = [];
+      animating = true;
 
       burst(cx, cy);
-      burst(cx - w*0.18, cy - h*0.10);
-      burst(cx + w*0.18, cy - h*0.10);
+      burst(cx - fwCanvas.width*0.18, cy - fwCanvas.height*0.10);
+      burst(cx + fwCanvas.width*0.18, cy - fwCanvas.height*0.10);
 
-      requestAnimationFrame(animateFireworks);
+      requestAnimationFrame(animate);
     }
 
     yesBtn.addEventListener('click', ()=>{
-      successMsg.style.display = 'block';
-      yesBtn.textContent = "YES!! 💘";
-      runFireworks();
+      yesMsg.style.display = 'block';
+      fireworksAroundYes();
+      yesBtn.animate([{transform:'scale(1)'},{transform:'scale(1.02)'},{transform:'scale(1)'}], {duration:240, easing:'ease-out'});
     });
 
     function placeNoSafely(randomize){
-      const cta = document.getElementById('ctaArea');
+      const cta = document.getElementById('valCta');
       const ctaRect = cta.getBoundingClientRect();
       const yesRect = yesBtn.getBoundingClientRect();
 
-      const btnW = noBtn.offsetWidth || 124;
+      const btnW = noBtn.offsetWidth || 130;
       const btnH = noBtn.offsetHeight || 40;
 
-      // no-go zone around YES (CTA coords)
+      // no-go zone (YES + margin), in CTA coordinates
       const noGo = {
         left: (yesRect.left - ctaRect.left) - 18,
         right: (yesRect.right - ctaRect.left) + 18,
@@ -1148,24 +1152,23 @@
         bottom: (yesRect.bottom - ctaRect.top) + 18
       };
 
-      const padL = 24, padR = 24, padB = 18;
+      const padL = 22, padR = 22, padB = 16;
       const minX = padL;
       const maxX = ctaRect.width - padR - btnW;
 
-      // ALWAYS below YES
-      const minY = Math.max(noGo.bottom + 28, ctaRect.height * 0.66);
+      // ALWAYS below YES (also keeps it away from message area somewhat)
+      const minY = Math.max(noGo.bottom + 24, ctaRect.height * 0.66);
       const maxY = ctaRect.height - padB - btnH;
-
       const safeMinY = Math.min(minY, maxY);
 
-      // default: centered, lower
+      // default: centered under YES
       let x = (ctaRect.width/2) - (btnW/2);
       let y = Math.max(safeMinY, ctaRect.height * 0.78);
 
       if(randomize){
-        for(let tries=0; tries<40; tries++){
-          x = minX + Math.random() * Math.max(10, (maxX - minX));
-          y = safeMinY + Math.random() * Math.max(10, (maxY - safeMinY));
+        for(let tries=0; tries<50; tries++){
+          x = minX + Math.random() * Math.max(8, (maxX - minX));
+          y = safeMinY + Math.random() * Math.max(8, (maxY - safeMinY));
 
           const intersects =
             x < noGo.right &&
@@ -1178,11 +1181,11 @@
       }
 
       noBtn.style.left = x + "px";
-      noBtn.style.top = y + "px";
+      noBtn.style.top  = y + "px";
       noBtn.style.transform = "translateX(0)";
     }
 
-    // Start centered below YES
+    // Start centered under YES
     placeNoSafely(false);
 
     noBtn.addEventListener('click', (e)=>{
@@ -1195,8 +1198,9 @@
     });
 
     window.addEventListener('resize', ()=>{
-      placeNoSafely(false);
       resizeFireworks();
+      placeNoSafely(false);
+      requestAnimationFrame(resizeScratch);
     });
   </script>
 </body>
