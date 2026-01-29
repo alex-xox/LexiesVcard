@@ -38,6 +38,7 @@
       overflow:hidden;
     }
 
+    /* subtle floating hearts in background */
     .bg-hearts{
       position:fixed; inset:0; pointer-events:none; overflow:hidden;
       filter: drop-shadow(0 8px 12px rgba(0,0,0,.06));
@@ -65,6 +66,7 @@
       to{ transform: translateY(-120vh) rotate(45deg); opacity:0;}
     }
 
+    /* Layout */
     .wrap{
       height:100%;
       display:flex;
@@ -72,7 +74,6 @@
       justify-content:center;
       padding:20px;
     }
-
     .stage{
       width:min(980px, 96vw);
       height:min(660px, 86vh);
@@ -97,6 +98,7 @@
       box-shadow: 0 8px 16px rgba(0,0,0,.05);
     }
 
+    /* Card Book */
     .book{
       width:100%;
       height:100%;
@@ -111,7 +113,6 @@
       border: 1px solid rgba(255, 133, 168, .35);
       touch-action: pan-y;
     }
-
     .book-inner{
       width:100%;
       height:100%;
@@ -122,6 +123,7 @@
       box-shadow: inset 0 0 0 1px rgba(240, 170, 200, .25);
     }
 
+    /* Navigation tap zones */
     .nav-zone{
       position:absolute; top:0; bottom:0;
       width:18%;
@@ -142,11 +144,8 @@
     .nav-right::after{ background: linear-gradient(270deg, rgba(255,77,141,.18), transparent); }
     .nav-zone:hover::after{opacity:1}
 
-    .pages{
-      position:absolute; inset:0;
-      border-radius: calc(var(--radius) - 8px);
-    }
-
+    /* Pages */
+    .pages{ position:absolute; inset:0; border-radius: calc(var(--radius) - 8px); }
     .page{
       position:absolute; inset:0;
       border-radius: calc(var(--radius) - 8px);
@@ -158,7 +157,6 @@
       overflow:hidden;
       transition: transform 850ms cubic-bezier(.2,.9,.2,1);
     }
-
     .page::before{
       content:"";
       position:absolute; left:0; top:0; bottom:0;
@@ -170,9 +168,9 @@
       opacity:.95;
       pointer-events:none;
     }
-
     .page.flipped{ transform: rotateY(-180deg); }
 
+    /* Content */
     .content{
       position:absolute;
       inset:0;
@@ -249,7 +247,7 @@
       margin: 8px 0;
     }
 
-    /* COVER decorations */
+    /* Cover decorations */
     .cover-frame{
       position:relative;
       flex:1;
@@ -371,6 +369,7 @@
       font-weight:600;
     }
 
+    /* Barely-visible secrets */
     .secrets{
       margin-top: 18px;
       padding-bottom: 8px;
@@ -416,7 +415,6 @@
       color: rgba(60,25,45,.72);
       line-height:1.35;
     }
-
     .scratch-area{
       position:relative;
       height: 230px;
@@ -484,7 +482,6 @@
     }
     .jar-btn:hover{ filter: brightness(1.02); }
     .jar-btn:active{ transform: scale(.99); }
-
     .jar-note{
       margin-top:auto;
       padding:16px 14px;
@@ -499,6 +496,74 @@
       align-items:center;
       justify-content:center;
       text-align:center;
+    }
+
+    /* Choose the Vibe page */
+    .vibe-wrap{
+      flex: 1;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+    .vibe-grid{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .vibe-card{
+      border-radius: 16px;
+      background: rgba(255,255,255,.68);
+      border: 1px solid rgba(240,170,200,.26);
+      box-shadow: 0 12px 22px rgba(0,0,0,.05);
+      padding: 12px 12px 12px 12px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      min-height: 86px;
+      position:relative;
+      overflow:hidden;
+    }
+    .vibe-card::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      opacity:.0;
+      background: radial-gradient(600px 120px at 10% 0%, rgba(255,77,141,.14), transparent 55%);
+      transition: opacity .2s ease;
+      pointer-events:none;
+    }
+    .vibe-card:hover::after{ opacity:.9; }
+
+    .vibe-pair{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    .vibe-pill{
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: 12px;
+      color: rgba(90, 20, 55, .92);
+      background: rgba(255,77,141,.10);
+      border: 1px solid rgba(255,77,141,.22);
+      box-shadow: 0 10px 18px rgba(0,0,0,.04);
+      white-space:nowrap;
+    }
+    .vibe-divider{
+      opacity:.55;
+      color: rgba(90, 20, 55, .75);
+      font-weight: 900;
+      letter-spacing:.02em;
+    }
+    .vibe-hint{
+      margin-top:auto;
+      font-size: 12.5px;
+      color: rgba(60,25,45,.68);
+      line-height: 1.35;
     }
 
     /* Constellation */
@@ -635,6 +700,7 @@
       line-height: 1.35;
     }
 
+    /* Mobile tweaks */
     @media (max-width: 820px){
       .content{ padding: 34px 18px 18px 44px; }
       .reasons{ grid-template-columns: 1fr; }
@@ -645,6 +711,8 @@
       .cover-frame{ padding: 18px 14px; }
       .flourish{ width:140px; height:140px; }
       .jar-btn{ height:52px; font-size:15px; }
+      .vibe-grid{ grid-template-columns: 1fr; }
+      .vibe-card{ min-height: 78px; }
     }
   </style>
 </head>
@@ -666,11 +734,11 @@
           <div class="pages" id="pages">
 
             <!-- PAGE 1: Cover -->
-            <section class="page" data-index="0" style="z-index:6">
+            <section class="page" data-index="0" style="z-index:7">
               <div class="content">
                 <div class="topline">
                   <span class="badge">Valentine’s Card</span>
-                  <span id="pageCountA">Page 1 / 6</span>
+                  <span id="pageCountA">Page 1 / 7</span>
                 </div>
 
                 <div class="cover-frame">
@@ -712,8 +780,8 @@
               </div>
             </section>
 
-            <!-- PAGE 2 -->
-            <section class="page" data-index="1" style="z-index:5">
+            <!-- PAGE 2: Reasons -->
+            <section class="page" data-index="1" style="z-index:6">
               <div class="content">
                 <div class="topline">
                   <span class="badge">Chapter One</span>
@@ -739,7 +807,7 @@
             </section>
 
             <!-- PAGE 3: Scratch -->
-            <section class="page" data-index="2" style="z-index:4">
+            <section class="page" data-index="2" style="z-index:5">
               <div class="content">
                 <div class="topline">
                   <span class="badge">Interactive</span>
@@ -764,7 +832,6 @@
                       </div>
 
                       <div style="height:10px"></div>
-                      <!-- removed the “No spoilers...” note -->
                     </div>
                   </div>
                 </div>
@@ -772,7 +839,7 @@
             </section>
 
             <!-- PAGE 4: Compliment Jar -->
-            <section class="page" data-index="3" style="z-index:3">
+            <section class="page" data-index="3" style="z-index:4">
               <div class="content">
                 <div class="topline">
                   <span class="badge">Interactive</span>
@@ -798,8 +865,33 @@
               </div>
             </section>
 
-            <!-- PAGE 5: Constellation -->
-            <section class="page" data-index="4" style="z-index:2">
+            <!-- PAGE 5: Choose the Vibe (NEW) -->
+            <section class="page" data-index="4" style="z-index:3">
+              <div class="content">
+                <div class="topline">
+                  <span class="badge">Interactive</span>
+                  <span>Choose the Vibe</span>
+                </div>
+
+                <h2 style="font-family:'Playfair Display',serif; font-size:28px; color:rgba(70,25,50,.92); text-align:center">
+                  Choose the Vibe 🎧
+                </h2>
+
+                <div class="vibe-wrap">
+                  <p class="note" style="margin:0 auto; text-align:center; max-width:62ch">
+                    Just for fun. Pick which side you are… or which one you feel today.
+                  </p>
+
+                  <div class="scrollable" style="padding-right:10px">
+                    <div class="vibe-grid" id="vibeGrid"></div>
+                    <div style="height:10px"></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- PAGE 6: Constellation -->
+            <section class="page" data-index="5" style="z-index:2">
               <div class="content">
                 <div class="topline">
                   <span class="badge">Interactive</span>
@@ -810,24 +902,21 @@
                   A Little Constellation
                 </h2>
 
-                <!-- removed "(you can edit these to match your story)" -->
                 <p class="note" style="margin-top:-6px">
-                  Tap the hearts to reveal tiny “moments”.
+                  Tap the hearts to reveal something I’m looking forward to.
                 </p>
 
                 <div class="constellation" id="constellation">
                   <div class="tooltip" id="tooltip">
-                    <strong>Tap a heart</strong> to reveal a note.
+                    <strong>Tap a heart</strong> to reveal something I’m looking forward to.
                     <span class="pill" id="foundPill">0 / 6 found</span>
                   </div>
                 </div>
-
-                <!-- removed "(Replace these with inside jokes, dates, places, or memories.)" -->
               </div>
             </section>
 
-            <!-- PAGE 6: FINAL -->
-            <section class="page" data-index="5" style="z-index:1">
+            <!-- PAGE 7: FINAL -->
+            <section class="page" data-index="6" style="z-index:1">
               <div class="content">
                 <div class="topline">
                   <span class="badge">Final Page</span>
@@ -946,7 +1035,7 @@
 
     goTo(0);
 
-    /* Reasons list */
+    /* Reasons list (random order) */
     const reasons = [
       "How easy you are to talk to",
       "Your laugh",
@@ -981,7 +1070,7 @@
       reasonsGrid.appendChild(item);
     });
 
-    /* Scratch */
+    /* Scratch (fully opaque cover) */
     const scratchArea = document.getElementById('scratchArea');
     const canvas = document.getElementById('scratchCanvas');
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
@@ -1096,18 +1185,50 @@
       });
     }
 
-    /* Constellation */
+    /* Choose the Vibe (randomize order on load) */
+    const vibePairs = [
+      ["Late nights 🌙", "Early mornings ☀️"],
+      ["Staying in 🛋️", "Going out ✨"],
+      ["Spontaneous 🌀", "Planned 📅"],
+      ["Sweet 🍰", "Salty 🍿"],
+      ["Soft kisses 💋", "Heavy makeouts 😮‍💨"],
+      ["Soft music 🎧", "Windows down vibes 🚗"],
+      ["Being silly 😄", "Being thoughtful 💭"],
+      ["Hair pulls 😌", "Neck kisses 💋"],
+      ["Little spoon 🤍", "Big spoon 🫶"],
+      ["Movie night 🎬", "Game night 🎮"]
+    ];
+
+    const vibeGrid = document.getElementById('vibeGrid');
+    if(vibeGrid){
+      vibeGrid.innerHTML = "";
+      shuffle(vibePairs).forEach((pair)=>{
+        const card = document.createElement('div');
+        card.className = "vibe-card";
+        card.innerHTML = `
+          <div class="vibe-pair">
+            <span class="vibe-pill">${pair[0]}</span>
+            <span class="vibe-divider">/</span>
+            <span class="vibe-pill">${pair[1]}</span>
+          </div>
+          <div class="vibe-hint">Which one are you?</div>
+        `;
+        vibeGrid.appendChild(card);
+      });
+    }
+
+    /* Constellation (Things I'm looking forward to) */
     const constellation = document.getElementById('constellation');
     const tooltip = document.getElementById('tooltip');
     const foundPill = document.getElementById('foundPill');
 
     const memoryNotes = [
-      "A moment I realized I really like you.",
-      "Something about your smile that stays in my head.",
-      "The way you can make me laugh instantly.",
-      "How you make things feel easier.",
-      "A little thing you do that I adore.",
-      "The ‘this is my favorite person’ feeling."
+      "Getting to know you more",
+      "Late-night conversations",
+      "Laughing over small things",
+      "Moments that don’t feel rushed",
+      "That comfortable, easy feeling",
+      "Seeing where this goes"
     ];
     let found = 0;
 
@@ -1128,7 +1249,7 @@
           found++;
           foundPill.textContent = `${found} / 6 found`;
         }
-        tooltip.innerHTML = `<strong>Note:</strong> ${memoryNotes[i]}<span class="pill">${found} / 6 found</span>`;
+        tooltip.innerHTML = `<strong>Looking forward to:</strong> ${memoryNotes[i]}<span class="pill">${found} / 6 found</span>`;
       });
       constellation.appendChild(s);
     });
@@ -1168,7 +1289,6 @@
           hue: 320 + Math.random()*35
         });
       }
-      // cap so it never gets too heavy
       if(particles.length > 2600) particles.splice(0, particles.length - 2600);
     }
 
@@ -1189,13 +1309,11 @@
     function animate(){
       if(!animating) return;
 
-      // slight fade for smooth trails
       fwCtx.globalCompositeOperation = 'source-over';
       fwCtx.fillStyle = 'rgba(255,255,255,0.10)';
       fwCtx.fillRect(0,0,fwCanvas.width, fwCanvas.height);
 
       fwCtx.globalCompositeOperation = 'lighter';
-
       for(let i=particles.length-1;i>=0;i--){
         const p = particles[i];
         p.age++;
@@ -1213,10 +1331,8 @@
 
         if(p.age >= p.life) particles.splice(i,1);
       }
-
       fwCtx.globalCompositeOperation = 'source-over';
 
-      // keep running while fireworks are on; otherwise stop when done
       if(!fireworksOn && particles.length === 0){
         animating = false;
         fwCtx.clearRect(0,0,fwCanvas.width, fwCanvas.height);
@@ -1230,15 +1346,12 @@
       fireworksOn = true;
       resizeFireworks();
 
-      // start animation loop once
       if(!animating){
         animating = true;
-        // start with a clean canvas
         fwCtx.clearRect(0,0,fwCanvas.width, fwCanvas.height);
         requestAnimationFrame(animate);
       }
 
-      // initial burst + repeating bursts
       burstAroundYes();
       burstTimer = setInterval(burstAroundYes, 420);
     }
@@ -1249,6 +1362,7 @@
       yesBtn.animate([{transform:'scale(1)'},{transform:'scale(1.02)'},{transform:'scale(1)'}], {duration:240, easing:'ease-out'});
     });
 
+    /* NO teleports safely (never overlaps YES; always below) */
     function placeNoSafely(randomize){
       const cta = document.getElementById('valCta');
       const ctaRect = cta.getBoundingClientRect();
