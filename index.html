@@ -768,6 +768,137 @@
       .vibe-grid{ grid-template-columns: 1fr; }
       .vibe-card{ min-height: 112px; }
     }
+
+    /* ===== Heartbeat Page (theme-matching) ===== */
+/* Uses your site’s existing fonts/colors by default (inherits from your card/page styles). */
+
+.heartbeat-page{
+  /* don’t force a new layout style — let your page/card styles lead */
+  padding: clamp(18px, 3vw, 28px);
+}
+
+.hb-wrap{
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* Match your headings (Playfair / whatever your other pages use) */
+.hb-title{
+  margin: 0 0 14px;
+  font-family: inherit;            /* inherits your page heading font */
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  font-size: clamp(22px, 2.6vw, 28px);
+  opacity: 0.95;
+}
+
+/* Heart container styled like your card elements (soft, clean, not neon) */
+.hb-heart{
+  position: relative;
+  width: 132px;
+  height: 132px;
+  margin: 14px auto 10px;
+  cursor: pointer;
+  touch-action: none;
+  transform: translateZ(0);
+
+  /* Use your global shadow/rounding look */
+  border-radius: 999px;
+  animation: hbPulse var(--hbDur, 0.85s) ease-in-out infinite;
+}
+
+/* Subtle press feel, similar to buttons */
+.hb-heart:active{
+  transform: scale(0.985);
+}
+
+/* Heart shape: softened + uses theme-ish accent instead of a loud gradient */
+.hb-heart-shape{
+  position:absolute;
+  inset: 18px;
+  transform: rotate(-45deg);
+
+  /* theme-friendly fill (falls back nicely even if vars don’t exist) */
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255,255,255,0.55), rgba(255,255,255,0) 46%),
+    linear-gradient(135deg,
+      var(--accent, #ff4d7d),
+      var(--accent2, #ff2f6d)
+    );
+
+  border-radius: 18px;
+
+  /* match your overall soft shadow vibe */
+  box-shadow: 0 14px 34px rgba(0,0,0,0.12);
+}
+
+.hb-heart-shape::before,
+.hb-heart-shape::after{
+  content:"";
+  position:absolute;
+  width: 100%;
+  height: 100%;
+  background: inherit;
+  border-radius: 999px;
+}
+.hb-heart-shape::before{ top: -50%; left: 0; }
+.hb-heart-shape::after{ left: 50%; top: 0; }
+
+/* Glow: subtle + tied to accent */
+.hb-glow{
+  position:absolute;
+  inset:-8px;
+  border-radius: 999px;
+  filter: blur(14px);
+  opacity: 0.25;
+  background: radial-gradient(circle,
+    rgba(255, 77, 125, 0.55),
+    rgba(255, 77, 125, 0) 70%
+  );
+  animation: hbGlow var(--hbDur, 0.85s) ease-in-out infinite;
+  pointer-events:none;
+}
+
+/* Instruction text: match your muted body text style */
+.hb-instruction{
+  margin: 8px 0 0;
+  font-family: inherit;
+  font-size: 13px;
+  opacity: 0.70;
+}
+
+/* Message: match your page body tone */
+.hb-message{
+  margin: 16px auto 0;
+  max-width: 430px;
+  font-family: inherit;
+  font-size: clamp(16px, 2vw, 20px);
+  line-height: 1.35;
+
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 600ms ease, transform 600ms ease;
+}
+.hb-message.is-visible{
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Animations stay the same */
+@keyframes hbPulse{
+  0%   { transform: scale(1); }
+  18%  { transform: scale(1.06); }
+  35%  { transform: scale(0.988); }
+  55%  { transform: scale(1.045); }
+  100% { transform: scale(1); }
+}
+@keyframes hbGlow{
+  0%   { transform: scale(0.96); opacity: 0.18; }
+  25%  { transform: scale(1.08); opacity: 0.30; }
+  100% { transform: scale(0.96); opacity: 0.18; }
+}
   </style>
 </head>
 
@@ -972,7 +1103,25 @@
               </div>
             </section>
 
-            <!-- PAGE 7: FINAL -->
+            <!-- PAGE 7: Heartbeat -->
+            <section class="page heartbeat-page" data-title="Heartbeat">
+  <div class="hb-wrap">
+    <h2 class="hb-title">My Heart When You’re Here</h2>
+
+    <div class="hb-heart" id="hbHeart" aria-label="Heartbeat">
+      <span class="hb-heart-shape"></span>
+      <span class="hb-glow"></span>
+    </div>
+
+    <p class="hb-instruction">Touch and hold the heart.</p>
+
+    <p class="hb-message" id="hbMessage">
+      Yeah… this is what you do to me.
+    </p>
+  </div>
+</section>
+
+            <!-- PAGE 8: FINAL -->
             <section class="page" data-index="6" style="z-index:1">
               <div class="content">
                 <div class="topline">
@@ -1565,6 +1714,67 @@ yesBtn.addEventListener('click', ()=>{
       placeNoSafely(false);
       requestAnimationFrame(resizeScratch);
     });
+
+    /* ===== Heartbeat Behavior ===== */
+(() => {
+  const heart = document.getElementById("hbHeart");
+  const msg = document.getElementById("hbMessage");
+  if (!heart) return;
+
+  let targetBpm = 72;
+  let currentBpm = 72;
+  let holding = false;
+  let rafId = null;
+
+  const bpmToDuration = (bpm) => (60 / bpm);
+
+  const setBpm = (bpm) => {
+    const dur = bpmToDuration(bpm);
+    heart.style.setProperty("--hbDur", `${dur.toFixed(3)}s`);
+  };
+
+  const showMsg = () => msg && msg.classList.add("is-visible");
+
+  const tick = () => {
+    const speed = holding ? 0.10 : 0.06;
+    currentBpm += (targetBpm - currentBpm) * speed;
+
+    currentBpm = Math.max(55, Math.min(140, currentBpm));
+    setBpm(currentBpm);
+
+    rafId = requestAnimationFrame(tick);
+  };
+
+  const start = () => {
+    if (rafId) return;
+    setBpm(currentBpm);
+    rafId = requestAnimationFrame(tick);
+  };
+
+  const hold = () => {
+    holding = true;
+    targetBpm = 124;
+    showMsg();
+    start();
+  };
+
+  const release = () => {
+    holding = false;
+    targetBpm = 72;
+    start();
+  };
+
+  heart.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
+    heart.setPointerCapture?.(e.pointerId);
+    hold();
+  });
+  heart.addEventListener("pointerup", release);
+  heart.addEventListener("pointercancel", release);
+  heart.addEventListener("pointerleave", () => { if (holding) release(); });
+
+  setBpm(72);
+})();
   </script>
 </body>
 </html>
