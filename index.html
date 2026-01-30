@@ -769,110 +769,105 @@
       .vibe-card{ min-height: 112px; }
     }
 
-    /* =========================================================
-   HEARTBEAT PAGE — FINAL THEME-MATCHED VERSION
-   ========================================================= */
-
-.heartbeat-page{
+   /* ============================
+   HOLD THE HEART PAGE
+   ============================ */
+.holdheart-page{
   padding: clamp(22px, 4vh, 48px);
 }
 
-.hb-wrap{
+.hh-wrap{
   max-width: 520px;
   margin: 0 auto;
   text-align: center;
-  padding-top: clamp(32px, 6vh, 80px); /* centers heart lower */
+
+  /* keeps the heart centered in the “letter” */
+  padding-top: clamp(34px, 7vh, 110px);
 }
 
-/* Title matches your card typography */
-.hb-title{
+.hh-title{
   font-family: inherit;
   font-weight: 600;
-  font-size: clamp(22px, 2.5vw, 28px);
-  margin-bottom: 14px;
+  font-size: clamp(22px, 2.4vw, 28px);
+  margin: 0 0 14px;
   opacity: 0.95;
 }
 
-/* ===== Heart container ===== */
-.hb-heart{
+.hh-heart{
   position: relative;
-  width: 150px;
-  height: 150px;
-  margin: 24px auto 14px;
+  width: clamp(150px, 28vw, 220px);
+  aspect-ratio: 1 / 1;
+  margin: 16px auto 12px;
   cursor: pointer;
   touch-action: none;
-  animation: hbPulse var(--hbDur, 0.85s) ease-in-out infinite;
+  user-select: none;
+
+  /* animation speed controlled by JS via --hhDur */
+  animation: hhPulse var(--hhDur, 0.9s) ease-in-out infinite;
 }
 
-/* ===== SVG Heart ===== */
-.hb-heart-svg{
+.hh-heart:active{
+  transform: scale(0.99);
+}
+
+.hh-heart-svg{
   width: 100%;
   height: 100%;
   display: block;
-  color: var(--pink); /* uses your existing theme color */
   filter:
-    drop-shadow(0 16px 30px rgba(0,0,0,0.18))
-    drop-shadow(0 6px 12px rgba(255, 105, 180, 0.25));
+    drop-shadow(0 18px 34px rgba(0,0,0,0.18))
+    drop-shadow(0 8px 16px rgba(0,0,0,0.10));
 }
 
-.hb-heart-svg path{
-  fill: currentColor;
-  stroke: rgba(255,255,255,0.4);
-  stroke-width: 0.6;
-}
-
-/* ===== Soft glow ===== */
-.hb-glow{
+.hh-glow{
   position: absolute;
-  inset: -14px;
+  inset: -16px;
   border-radius: 999px;
   background: radial-gradient(
     circle,
-    rgba(255, 105, 180, 0.45),
+    rgba(255, 105, 180, 0.35),
     rgba(255, 105, 180, 0) 70%
   );
   filter: blur(18px);
   opacity: 0.22;
-  animation: hbGlow var(--hbDur, 0.85s) ease-in-out infinite;
   pointer-events: none;
+  animation: hhGlow var(--hhDur, 0.9s) ease-in-out infinite;
 }
 
-/* ===== Instruction ===== */
-.hb-instruction{
+.hh-instruction{
   font-size: 13px;
   opacity: 0.7;
-  margin-top: 6px;
+  margin: 10px 0 0;
 }
 
-/* ===== Message (delayed reveal) ===== */
-.hb-message{
+.hh-message{
   max-width: 420px;
   margin: 18px auto 0;
   font-size: clamp(16px, 2vw, 20px);
   line-height: 1.35;
+
   opacity: 0;
   transform: translateY(8px);
-  transition: opacity 600ms ease, transform 600ms ease;
+  transition: opacity 500ms ease, transform 500ms ease;
 }
 
-.hb-message.is-visible{
+.hh-message.is-visible{
   opacity: 1;
   transform: translateY(0);
 }
 
-/* ===== Animations ===== */
-@keyframes hbPulse{
+@keyframes hhPulse{
   0%   { transform: scale(1); }
-  18%  { transform: scale(1.05); }
+  18%  { transform: scale(1.055); }
   35%  { transform: scale(0.99); }
-  55%  { transform: scale(1.04); }
+  58%  { transform: scale(1.045); }
   100% { transform: scale(1); }
 }
 
-@keyframes hbGlow{
-  0%   { transform: scale(0.96); opacity: 0.18; }
-  25%  { transform: scale(1.08); opacity: 0.32; }
-  100% { transform: scale(0.96); opacity: 0.18; }
+@keyframes hhGlow{
+  0%   { transform: scale(0.96); opacity: 0.16; }
+  25%  { transform: scale(1.10); opacity: 0.30; }
+  100% { transform: scale(0.96); opacity: 0.16; }
 }
   </style>
 </head>
@@ -1079,25 +1074,38 @@
             </section>
 
             <!-- PAGE 7: Heartbeat -->
-            <section class="page heartbeat-page" data-title="Heartbeat">
-  <div class="hb-wrap">
-    <h2 class="hb-title">My Heart When You’re Here</h2>
+            <section class="page holdheart-page">
+  <div class="hh-wrap">
+    <h2 class="hh-title">Hold it.</h2>
 
-   <div class="hb-heart" id="hbHeart" aria-label="Heartbeat">
-  <svg class="hb-heart-svg" viewBox="0 0 24 24" aria-hidden="true">
-    <path d="M12 21s-7.2-4.7-9.7-8.6C.5 9.5 2 6.4 5.1 5.6c1.7-.4 3.5.2 4.6 1.6.4.5.7 1.1.9 1.7.2-.6.5-1.2.9-1.7 1.1-1.4 2.9-2 4.6-1.6 3.1.8 4.6 3.9 2.8 6.8C19.2 16.3 12 21 12 21z"/>
-  </svg>
-  <span class="hb-glow"></span>
-</div>
+    <div class="hh-heart" id="hhHeart" role="button" aria-label="Hold the heart">
+      <svg class="hh-heart-svg" viewBox="0 0 24 24" aria-hidden="true">
+        <defs>
+          <linearGradient id="hhHeart3D" x1="4" y1="4" x2="20" y2="22" gradientUnits="userSpaceOnUse">
+            <stop offset="0%"  stop-color="var(--pink)"/>
+            <stop offset="55%" stop-color="var(--pinkDark)"/>
+            <stop offset="100%" stop-color="rgba(0,0,0,0.25)"/>
+          </linearGradient>
 
-    <p class="hb-instruction">Touch and hold the heart.</p>
+          <radialGradient id="hhHighlight" cx="35%" cy="25%" r="60%">
+            <stop offset="0%" stop-color="rgba(255,255,255,0.85)"/>
+            <stop offset="55%" stop-color="rgba(255,255,255,0.15)"/>
+            <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+          </radialGradient>
+        </defs>
 
-    <p class="hb-message" id="hbMessage">
-      Yeah… this is what you do to me.
-    </p>
+        <path fill="url(#hhHeart3D)" d="M12 21s-7.2-4.7-9.7-8.6C.5 9.5 2 6.4 5.1 5.6c1.7-.4 3.5.2 4.6 1.6.4.5.7 1.1.9 1.7.2-.6.5-1.2.9-1.7 1.1-1.4 2.9-2 4.6-1.6 3.1.8 4.6 3.9 2.8 6.8C19.2 16.3 12 21 12 21z"/>
+        <path fill="url(#hhHighlight)" d="M12 21s-7.2-4.7-9.7-8.6C.5 9.5 2 6.4 5.1 5.6c1.7-.4 3.5.2 4.6 1.6.4.5.7 1.1.9 1.7.2-.6.5-1.2.9-1.7 1.1-1.4 2.9-2 4.6-1.6 3.1.8 4.6 3.9 2.8 6.8C19.2 16.3 12 21 12 21z" opacity="0.75"/>
+      </svg>
+
+      <span class="hh-glow" aria-hidden="true"></span>
+    </div>
+
+    <p class="hh-instruction">Touch and hold the heart.</p>
+
+    <p class="hh-message" id="hhMsg">This is what you do to me</p>
   </div>
 </section>
-
             <!-- PAGE 8: FINAL -->
             <section class="page" data-index="6" style="z-index:1">
               <div class="content">
@@ -1692,78 +1700,90 @@ yesBtn.addEventListener('click', ()=>{
       requestAnimationFrame(resizeScratch);
     });
 
-    /* ===== Heartbeat Behavior ===== */
+/* ============================
+   HOLD THE HEART (press/hold)
+   ============================ */
 (() => {
-  const heart = document.getElementById("hbHeart");
-  const msg = document.getElementById("hbMessage");
+  const heart = document.getElementById("hhHeart");
+  const msg = document.getElementById("hhMsg");
   if (!heart) return;
 
-  let targetBpm = 72;
-  let currentBpm = 72;
   let holding = false;
   let rafId = null;
+  let msgTimer = null;
 
-  const bpmToDuration = (bpm) => (60 / bpm);
+  // bpm -> seconds per beat
+  const bpmToDur = (bpm) => (60 / bpm);
 
-  const setBpm = (bpm) => {
-    const dur = bpmToDuration(bpm);
-    heart.style.setProperty("--hbDur", `${dur.toFixed(3)}s`);
+  let currentBpm = 70;   // idle
+  let targetBpm  = 70;
+
+  const setDur = (bpm) => {
+    heart.style.setProperty("--hhDur", `${bpmToDur(bpm).toFixed(3)}s`);
   };
 
   const showMsg = () => msg && msg.classList.add("is-visible");
+  const hideMsg = () => msg && msg.classList.remove("is-visible");
 
   const tick = () => {
-    const speed = holding ? 0.10 : 0.06;
+    const speed = holding ? 0.12 : 0.07; // smoother ramp
     currentBpm += (targetBpm - currentBpm) * speed;
 
+    // clamp
     currentBpm = Math.max(55, Math.min(140, currentBpm));
-    setBpm(currentBpm);
+    setDur(currentBpm);
 
     rafId = requestAnimationFrame(tick);
   };
 
   const start = () => {
     if (rafId) return;
-    setBpm(currentBpm);
+    setDur(currentBpm);
     rafId = requestAnimationFrame(tick);
   };
 
-  let msgTimer = null;
+  const stopTimers = () => {
+    if (msgTimer) {
+      clearTimeout(msgTimer);
+      msgTimer = null;
+    }
+  };
 
-const hold = () => {
-  holding = true;
-  targetBpm = 124;
+  const hold = () => {
+    holding = true;
+    targetBpm = 125;
 
-  if (msgTimer) clearTimeout(msgTimer);
-  msgTimer = setTimeout(() => {
-    if (holding) showMsg();
-  }, 1000);
+    stopTimers();
+    // show message after ~1 second of holding
+    msgTimer = setTimeout(() => {
+      if (holding) showMsg();
+    }, 1000);
 
-  start();
-};
+    start();
+  };
 
-const release = () => {
-  holding = false;
-  targetBpm = 72;
+  const release = () => {
+    holding = false;
+    targetBpm = 70;
 
-  if (msgTimer) {
-    clearTimeout(msgTimer);
-    msgTimer = null;
-  }
+    stopTimers();
+    hideMsg();
 
-  start();
-};
+    start();
+  };
 
   heart.addEventListener("pointerdown", (e) => {
     e.preventDefault();
     heart.setPointerCapture?.(e.pointerId);
     hold();
   });
+
   heart.addEventListener("pointerup", release);
   heart.addEventListener("pointercancel", release);
   heart.addEventListener("pointerleave", () => { if (holding) release(); });
 
-  setBpm(72);
+  // init
+  setDur(70);
 })();
   </script>
 </body>
