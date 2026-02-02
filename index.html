@@ -689,10 +689,9 @@
   align-items:center;
   justify-content:flex-start;
   text-align:center;
-  gap:16px;
+  gap:0;                 /* 👈 remove gap so we control spacing precisely */
   padding-top:20px;
 }
-
 .heartbeat-note{
   font-size:14px;
   color: rgba(60,25,45,.75);
@@ -701,7 +700,7 @@
 
 /* Heart sits LOWER than the text */
 .heart-3d{
-  margin-top: 10px; /* 👈 pushes heart down below text */
+  margin-top: 38px;      /* 👈 THIS pushes the heart south */
   width:140px;
   height:140px;
   position:relative;
@@ -716,7 +715,7 @@
   animation: heartbeat 1.6s ease-in-out infinite;
   transition: animation-duration .25s ease;
 }
-
+    
 .heart-3d::before,
 .heart-3d::after{
   content:"";
@@ -762,6 +761,11 @@
 .heart-message.show{
   opacity:1;
   transform: translateY(0);
+}
+  
+    .heartbeat-note{
+  margin-top: 0;
+  margin-bottom: 0;
 }
     
     /* Final page */
