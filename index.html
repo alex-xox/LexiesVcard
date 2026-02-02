@@ -1437,26 +1437,28 @@
       constellation.appendChild(s);
     });
 
-    /* ===== Heartbeat Interaction ===== */
+/* ===== Heartbeat Interaction ===== */
 const heart = document.getElementById('heart3d');
 const heartMsg = document.getElementById('heartMsg');
 
-if(heart){
+if (heart && heartMsg) {
   let holdTimer = null;
 
-  const startHold = ()=>{
+  const startHold = () => {
     heart.classList.add('fast');
-    holdTimer = setTimeout(()=>{
+
+    holdTimer = setTimeout(() => {
       heartMsg.classList.add('show');
     }, 600);
   };
 
-  const endHold = ()=>{
+  const endHold = () => {
     heart.classList.remove('fast');
     clearTimeout(holdTimer);
+    heartMsg.classList.remove('show'); // 👈 hide text when released
   };
 
-  heart.addEventListener('pointerdown', e=>{
+  heart.addEventListener('pointerdown', (e) => {
     e.preventDefault();
     startHold();
   });
