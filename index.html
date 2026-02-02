@@ -681,6 +681,42 @@
       white-space:nowrap;
     }
 
+    /* Floating hearts on reveal (reuses your existing .heart class) */
+#heartBurst .heart {
+  animation: floatUp 2.8s ease-out forwards;
+  opacity: 0.7;
+}
+
+/* Reveal animation for text */
+.jar-note {
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.jar-note.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Copy feedback */
+#saveDateBtn.copied::after {
+  content: "Copied! 💕";
+  position: absolute;
+  top: -36px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255,77,141,0.92);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  white-space: nowrap;
+  animation: fadeOut 1.8s forwards;
+}
+
+@keyframes fadeOut {
+  0%   { opacity: 1; transform: translateX(-50%) translateY(0); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-16px); }
+}
+    
     /* ===== PAGE: Heartbeat ===== */
 .heartbeat-wrap{
   flex:1;
@@ -1059,7 +1095,56 @@
               </div>
             </section>
 
-            <!-- PAGE 7: Heartbeat -->
+            <!-- PAGE 7: Future Date Jar (enhanced) -->
+<section class="page" data-index="4" style="z-index:3">  <!-- adjust index/z-index as needed -->
+  <div class="content">
+    <div class="topline">
+      <span class="badge">Interactive</span>
+      <span>Future Date Jar</span>
+    </div>
+    <h2 style="font-family:'Playfair Display',serif; font-size:28px; color:rgba(70,25,50,.92); text-align:center; display:flex; align-items:center; justify-content:center; gap:12px; margin:0;">
+      <svg width="42" height="42" viewBox="0 0 100 100" aria-hidden="true" style="flex-shrink:0;">
+        <defs>
+          <linearGradient id="jarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#ff85a8" />
+            <stop offset="100%" stop-color="#ff4d8d" />
+          </linearGradient>
+        </defs>
+        <!-- Simple jar shape -->
+        <path d="M30 20 Q20 40 20 60 Q20 80 35 90 L65 90 Q80 80 80 60 Q80 40 70 20 Z" fill="none" stroke="url(#jarGrad)" stroke-width="6" stroke-linecap="round"/>
+        <!-- Heart inside jar -->
+        <path d="M50 35 Q 35 20 35 35 Q35 50 50 65 Q65 50 65 35 Q65 20 50 35 Z" fill="rgba(255,77,141,0.85)" transform="scale(0.7) translate(21,8)"/>
+      </svg>
+      Future Date Jar 📅💕
+    </h2>
+    <div class="jar-page">
+      <div class="mini-panel">
+        <h3>Pick Our Next Adventure</h3>
+        <p class="note" style="margin:0 0 16px; text-align:center; max-width:none">
+          Tap to pull a date idea I can't wait to experience with you.
+        </p>
+        <button class="jar-btn" id="dateJarBtn" type="button">Pull a Date ✨</button>
+        
+        <div class="jar-note" id="dateNote" style="min-height:110px; position:relative; overflow:hidden;">
+          Tap to reveal our next memory-in-the-making 💗
+        </div>
+        
+        <!-- Floating hearts container (for animation) -->
+        <div id="heartBurst" class="bg-hearts" style="position:absolute; inset:0; pointer-events:none; opacity:0; transition:opacity 0.4s;"></div>
+        
+        <div style="margin-top:16px; text-align:center;">
+          <span id="dateCounter" class="pill" style="font-size:13px; padding:6px 14px;">0 / 20 pulled</span>
+        </div>
+        
+        <button class="vibe-option" id="saveDateBtn" type="button" style="margin:16px auto 0; width:180px; display:none; font-size:14px; padding:10px;">
+          Save this date 📋
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+            
+            <!-- PAGE 8: Heartbeat -->
 <section class="page" data-index="6">
   <div class="content">
     <div class="topline">
@@ -1085,7 +1170,7 @@
   </div>
 </section>
             
-            <!-- PAGE 8: FINAL -->
+            <!-- PAGE 9: FINAL -->
             <section class="page" data-index="6" style="z-index:1">
               <div class="content">
                 <div class="topline">
@@ -1437,6 +1522,117 @@
       constellation.appendChild(s);
     });
 
+    /* Future Date Jar - Enhanced */
+const dateIdeas = [
+  "Drive to the coast just to watch the sunrise with coffee in hand",
+  "Build a blanket fort and binge our favorite show under fairy lights",
+  "Cook something new together (even if it turns out terrible — we'll laugh)",
+  "Stargaze on a clear night with blankets and your playlist",
+  "Slow dance in the kitchen at 2 a.m. to whatever song comes on",
+  "Go to a bookstore and pick books for each other to read aloud",
+  "Have a picnic in the park with your favorite snacks and no phones",
+  "Take a spontaneous road trip — no destination, just us and music",
+  "Try a pottery or painting class and make something messy and cute",
+  "Stay in with face masks, wine, and deep talks about everything",
+  "Visit a new coffee shop and rate their lattes like critics",
+  "Watch the sunset from somewhere high up and talk about the future",
+  "Have a game night with silly bets and your favorite snacks",
+  "Go thrifting and find outfits for each other to try on",
+  "Cuddle up during a thunderstorm with hot cocoa and stories",
+  "Take a late-night drive with windows down and sing terribly",
+  "Make a time capsule with letters and mementos for future us",
+  "Have breakfast in bed and plan our dream day together",
+  "Visit an aquarium or museum and make up backstories for everything",
+  "Just lay in bed talking until the sun comes up — no rush"
+];
+
+const dateJarBtn = document.getElementById('dateJarBtn');
+const dateNote = document.getElementById('dateNote');
+const saveDateBtn = document.getElementById('saveDateBtn');
+const dateCounter = document.getElementById('dateCounter');
+const heartBurst = document.getElementById('heartBurst');
+
+let remainingDates = shuffle(dateIdeas.slice()); // copy + shuffle
+let pulledCount = 0;
+const totalDates = dateIdeas.length;
+
+function updateCounter() {
+  dateCounter.textContent = `${pulledCount} / ${totalDates} pulled`;
+}
+
+function createFloatingHeart() {
+  const h = document.createElement('div');
+  h.className = 'heart';
+  const size = 12 + Math.random() * 14;
+  const left = 20 + Math.random() * 60;
+  h.style.left = left + '%';
+  h.style.bottom = '-20px';
+  h.style.width = size + 'px';
+  h.style.height = size + 'px';
+  h.style.animationDuration = (2 + Math.random() * 1.2) + 's';
+  heartBurst.appendChild(h);
+  setTimeout(() => h.remove(), 3500);
+}
+
+if (dateJarBtn && dateNote) {
+  updateCounter();
+
+  dateJarBtn.addEventListener('click', () => {
+    if (remainingDates.length === 0) {
+      // Reshuffle when all are pulled
+      remainingDates = shuffle(dateIdeas.slice());
+      pulledCount = 0;
+      updateCounter();
+      dateNote.textContent = "All dates discovered! Starting over... 💞";
+      saveDateBtn.style.display = 'none';
+      return;
+    }
+
+    const idea = remainingDates.pop();
+    pulledCount++;
+    updateCounter();
+
+    // Reveal with animation
+    dateNote.style.opacity = '0';
+    dateNote.style.transform = 'translateY(12px)';
+    setTimeout(() => {
+      dateNote.textContent = idea;
+      dateNote.classList.add('revealed');
+      dateNote.style.opacity = '1';
+      dateNote.style.transform = 'translateY(0)';
+      
+      // Floating hearts burst
+      heartBurst.style.opacity = '0.8';
+      for (let i = 0; i < 5; i++) {
+        setTimeout(createFloatingHeart, i * 180);
+      }
+      setTimeout(() => heartBurst.style.opacity = '0', 2200);
+    }, 300);
+
+    // Show save button
+    saveDateBtn.style.display = 'block';
+    saveDateBtn.classList.remove('copied');
+    saveDateBtn.textContent = 'Save this date 📋';
+  });
+
+  // Copy to clipboard
+  saveDateBtn.addEventListener('click', () => {
+    const text = dateNote.textContent.trim();
+    if (text && text !== "Tap to reveal our next memory-in-the-making 💗") {
+      navigator.clipboard.writeText(text).then(() => {
+        saveDateBtn.classList.add('copied');
+        saveDateBtn.textContent = 'Saved!';
+        setTimeout(() => {
+          saveDateBtn.classList.remove('copied');
+          saveDateBtn.textContent = 'Save this date 📋';
+        }, 2200);
+      }).catch(err => {
+        console.error('Copy failed', err);
+      });
+    }
+  });
+}
+    
 /* ===== Heartbeat Interaction ===== */
 const heart = document.getElementById('heart3d');
 const heartMsg = document.getElementById('heartMsg');
